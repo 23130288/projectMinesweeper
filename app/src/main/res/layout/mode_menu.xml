@@ -4,44 +4,133 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- back button -->
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/tiny5"
+        android:text="Back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_marginTop="100dp"
         android:gravity="center"
+        android:orientation="vertical"
         android:weightSum="1"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Modes -->
         <Button
-            android:id="@+id/btnMode1"
+            android:id="@+id/btnModeClassic"
             android:layout_width="220dp"
             android:layout_height="60dp"
-            android:text="mode1"
-            android:textSize="20sp"
             android:layout_marginTop="80dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <Button
-            android:id="@+id/btnMode2"
-            android:layout_width="220dp"
-            android:layout_height="60dp"
-            android:text="mode2"
+            android:fontFamily="@font/tiny5"
+            android:text="Classic"
             android:textSize="20sp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/btnMode3"
-            android:layout_width="220dp"
-            android:layout_height="60dp"
-            android:text="mode3"
-            android:textSize="20sp"
-            android:layout_marginTop="24dp"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/layoutSetupGame"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:visibility="visible"
+            app:cardCornerRadius="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/btnModeClassic">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/tiny5"
+                        android:gravity="center"
+                        android:text="New Game"
+                        android:textSize="24sp" />
+
+                    <Button
+                        android:id="@+id/btnCloseSetup"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:fontFamily="@font/tiny5"
+                        android:text="X" />
+                </LinearLayout>
+
+                <!-- Easy -->
+                <Button
+                    android:id="@+id/btnEasy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/tiny5"
+                    android:gravity="right"
+                    android:text="Easy&#10;9 x 9   10 Mines" />
+
+                <!-- Medium -->
+                <Button
+                    android:id="@+id/btnMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/tiny5"
+                    android:gravity="right"
+                    android:text="Medium&#10;16 x 16   40 Mines" />
+
+                <!-- Hard -->
+                <Button
+                    android:id="@+id/btnHard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/tiny5"
+                    android:gravity="right"
+                    android:text="Hard&#10;30 x 16   99 Mines" />
+
+                <!-- Extreme -->
+                <Button
+                    android:id="@+id/btnExtreme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/tiny5"
+                    android:gravity="right"
+                    android:text="Extreme&#10;30 x 24   160 Mines" />
+
+                <!-- Start -->
+                <Button
+                    android:id="@+id/btnStart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/tiny5"
+                    android:text="Start"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
