@@ -1,4 +1,4 @@
-package com.example.project;
+package com.example.project.firebase;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -8,20 +8,28 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.project.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
     private EditText edtEmailReset;
     private Button btnSendEmail;
     private FirebaseAuth mAuth;
-
+    private FirebaseUser user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reset_password);
 
         mAuth = FirebaseAuth.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Toast.makeText(this, "Bạn đã đăng nhập rồi!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         edtEmailReset = findViewById(R.id.edtEmailReset);
         btnSendEmail = findViewById(R.id.btnSendEmail);
