@@ -24,28 +24,25 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/edtOldPassword"
+            android:id="@+id/edtEmail"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="16dp"
-            android:background="@android:drawable/editbox_background"
             android:hint="Nhập email"
-            android:inputType="textPassword"
+            android:inputType="textEmailAddress"
             android:paddingHorizontal="16dp" />
 
         <EditText
-            android:id="@+id/edtNewPassword"
+            android:id="@+id/edtPassword"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginBottom="16dp"
-            android:background="@android:drawable/editbox_background"
             android:hint="Nhập mật khẩu"
             android:inputType="textPassword"
             android:paddingHorizontal="16dp" />
 
-
         <Button
-            android:id="@+id/btnChangePassword"
+            android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Đăng nhập"
