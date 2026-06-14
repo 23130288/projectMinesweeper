@@ -1,8 +1,10 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -15,7 +17,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edtEmail;
     private EditText edtPassword;
     private Button btnLogin;
-
+    private TextView txtRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        txtRegister = findViewById(R.id.txtRegister);
 
         btnLogin.setOnClickListener(v -> {
 
@@ -40,6 +43,12 @@ public class LoginActivity extends AppCompatActivity {
             else {
                 Toast.makeText(this,"Sai email hoặc mật khẩu",Toast.LENGTH_SHORT).show();
             }
+        });
+
+        txtRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this,
+                    RegisterActivity.class);
+            startActivity(intent);
         });
     }
 }
