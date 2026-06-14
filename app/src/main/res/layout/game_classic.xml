@@ -4,15 +4,106 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <GridLayout
-        android:id="@+id/gridBoard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:columnCount="5"
-        android:rowCount="5"
-        app:layout_constraintTop_toTopOf="parent"
+    <!-- HEADER -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerBar"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/background_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <!-- Flag -->
+        <ImageView
+            android:id="@+id/btnFlag"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_flag"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <!-- Hint -->
+        <ImageView
+            android:id="@+id/btnHint"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_hint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/txtBombs"
+            app:layout_constraintStart_toEndOf="@id/btnFlag"
+            app:layout_constraintTop_toTopOf="parent" />
+        <!-- Remaining bombs -->
+        <TextView
+            android:id="@+id/txtBombs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="010"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnReset"
+            app:layout_constraintTop_toTopOf="parent" />
+        <!-- Reset -->
+        <ImageView
+            android:id="@+id/btnReset"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_face_reset"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <!-- Time -->
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnReset"
+            app:layout_constraintTop_toTopOf="parent" />
+        <!-- Setting -->
+        <ImageView
+            android:id="@+id/btnSetting"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_setting"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:id="@+id/boardContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:background="@drawable/background_body"
+        app:layout_constraintTop_toBottomOf="@id/headerBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <GridLayout
+            android:id="@+id/gridBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.project.game.NewGameDialog;
 import com.google.android.material.card.MaterialCardView;
 
 public class ModeMenuActivity extends AppCompatActivity {
@@ -19,16 +20,8 @@ public class ModeMenuActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> {finish();});
 
         Button btnModeClassic = findViewById(R.id.btnModeClassic);
-        MaterialCardView layoutSetupGame = findViewById(R.id.layoutSetupGame);
-        btnModeClassic.setOnClickListener(v -> layoutSetupGame.setVisibility(View.VISIBLE));
-
-        Button btnCloseSetup = findViewById(R.id.btnCloseSetup);
-        btnCloseSetup.setOnClickListener(v -> layoutSetupGame.setVisibility(View.GONE));
-
-        Button btnStart = findViewById(R.id.btnStart);
-        btnStart.setOnClickListener(v -> {
-            Intent intent = new Intent(ModeMenuActivity.this, GameClassicActivity.class);
-            startActivity(intent);
+        btnModeClassic.setOnClickListener(v -> {
+            NewGameDialog dialog = new NewGameDialog();dialog.show(getSupportFragmentManager(), "NEW_GAME_DIALOG");
         });
     }
 }
