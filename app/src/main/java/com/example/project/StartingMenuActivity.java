@@ -27,13 +27,13 @@ public class StartingMenuActivity extends AppCompatActivity {
 
         Button btnPlay = findViewById(R.id.btnPlay);
         btnPlay.setOnClickListener(v -> {
-            Intent intent = new Intent(StartingMenuActivity.this, ModeMenuActivity.class);
+            Intent intent = new Intent(this, ModeMenuActivity.class);
             startActivity(intent);
         });
 
         ShapeableImageView imgAvatar = findViewById(R.id.imgAvatar);
         imgAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(StartingMenuActivity.this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         });
     }
