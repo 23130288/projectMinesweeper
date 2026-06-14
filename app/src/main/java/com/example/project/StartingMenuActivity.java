@@ -12,13 +12,20 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.imageview.ShapeableImageView;
 
+import Model.Session;
+
 public class StartingMenuActivity extends AppCompatActivity {
+    private ShapeableImageView imgAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.starting_menu);
+
+        imgAvatar = findViewById(R.id.imgAvatar);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -26,15 +33,33 @@ public class StartingMenuActivity extends AppCompatActivity {
         });
 
         Button btnPlay = findViewById(R.id.btnPlay);
+
         btnPlay.setOnClickListener(v -> {
-            Intent intent = new Intent(StartingMenuActivity.this, ModeMenuActivity.class);
+            Intent intent = new Intent(
+                    StartingMenuActivity.this,
+                    ModeMenuActivity.class);
+
             startActivity(intent);
         });
 
-        ShapeableImageView imgAvatar = findViewById(R.id.imgAvatar);
         imgAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(StartingMenuActivity.this, LoginActivity.class);
+            Intent intent = new Intent(
+                    StartingMenuActivity.this,
+                    LoginActivity.class);
+
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(Session.isLoggedIn){
+            imgAvatar.setImageResource(R.drawable.avatar_admin);
+        }
+        else{
+            imgAvatar.setImageResource(R.drawable.default_avatar);
+        }
     }
 }
