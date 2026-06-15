@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/tiny5"
+                android:gravity="center"
+                android:text="New Game"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/btnCloseSetup"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:fontFamily="@font/tiny5"
+                android:text="X" />
+        </LinearLayout>
+
+        <!-- Easy -->
+        <Button
+            android:id="@+id/btnEasy"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/tiny5"
+            android:gravity="right"
+            android:text="Easy&#10;9 x 9   10 Mines" />
+
+        <!-- Medium -->
+        <Button
+            android:id="@+id/btnMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/tiny5"
+            android:gravity="right"
+            android:text="Medium&#10;16 x 16   40 Mines" />
+
+        <!-- Hard -->
+        <Button
+            android:id="@+id/btnHard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/tiny5"
+            android:gravity="right"
+            android:text="Hard&#10;30 x 16   99 Mines" />
+
+        <!-- Extreme -->
+        <Button
+            android:id="@+id/btnExtreme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/tiny5"
+            android:gravity="right"
+            android:text="Extreme&#10;30 x 24   160 Mines" />
+
+        <!-- Start -->
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/tiny5"
+            android:text="Start"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
