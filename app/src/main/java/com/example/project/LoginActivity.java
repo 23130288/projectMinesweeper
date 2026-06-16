@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
             String email = edtEmail.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
 
-            if(TextUtils.isEmpty(password)) {
+            if(TextUtils.isEmpty(email)) {
                 edtEmail.setError("Vui lòng nhập email");
                 return;
             }
