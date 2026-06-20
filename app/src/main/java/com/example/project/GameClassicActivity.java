@@ -1,16 +1,25 @@
 package com.example.project;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.project.game.NewGameDialog;
+
+import java.util.Locale;
 
 import Model.Game;
 
@@ -24,8 +33,9 @@ public class GameClassicActivity extends AppCompatActivity {
     private float lastY;
     private boolean isDragging = false;
     private boolean isScaling = false;
-
     Game game;
+
+    private Runnable timerRunnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +48,15 @@ public class GameClassicActivity extends AppCompatActivity {
         game = new Game();
         game.setUpGame(rows, cols, mines);
 
+        ImageView btnReset = findViewById(R.id.btnReset);
+        btnReset.setOnClickListener(v -> {
+            NewGameDialog dialog = new NewGameDialog();dialog.show(getSupportFragmentManager(), "NEW_GAME_DIALOG");
+        });
+
+        // set up zoom, dragging
         boardContainer = findViewById(R.id.boardContainer);
         gridBoard = findViewById(R.id.gridBoard);
+        ImageView backgroundImage = findViewById(R.id.backgroundImage);
         scaleDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
             @Override
             public boolean onScaleBegin(@NonNull ScaleGestureDetector detector) {
@@ -52,6 +69,11 @@ public class GameClassicActivity extends AppCompatActivity {
                 scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 4.0f));
                 gridBoard.setScaleX(scaleFactor);
                 gridBoard.setScaleY(scaleFactor);
+                if (scaleFactor > 1.0f) {
+                    backgroundImage.setVisibility(View.GONE);
+                } else {
+                    backgroundImage.setVisibility(View.VISIBLE);
+                }
                 limitTranslation();
                 return true;
             }
@@ -64,7 +86,8 @@ public class GameClassicActivity extends AppCompatActivity {
         gridBoard.setColumnCount(cols);
 
         DisplayMetrics dm = getResources().getDisplayMetrics();
-        int screenWidth = dm.widthPixels;
+        int margin = (int) (10 * dm.density * 2);
+        int screenWidth = dm.widthPixels - margin;
         int tileSize = screenWidth / cols;
         // set up game
         for (int row = 0; row < rows; row++) {
@@ -81,13 +104,36 @@ public class GameClassicActivity extends AppCompatActivity {
                 tile.setBackground(null);
                 tile.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-                tile.setOnClickListener(v -> openTile());
+                int finalRow = row;
+                int finalCol = col;
+                tile.setOnClickListener(v -> openTile(finalRow, finalCol));
                 gridBoard.addView(tile);
             }
         }
+
+        // set up flags
+        TextView txtBombs = findViewById(R.id.txtBombs);
+        txtBombs.setText(String.format(Locale.getDefault(), "%03d", game.getFlags()));
+
+        // set up time
+        TextView txtTime = findViewById(R.id.txtTime);
+        Handler handler = new Handler(Looper.getMainLooper());
+        timerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                game.increaseTime();
+                txtTime.setText(String.format(Locale.getDefault(), "%03d", Math.min(game.getTime(), 999)));
+                handler.postDelayed(this, 1000);
+            }
+        };
     }
 
-    private void openTile() {
+    private void openTile(int row, int col) {
+        if (game.isFirstHit()) {
+            game.setUpBombs(row, col);
+            timerRunnable.run();
+        }
+        game.hitTile(row, col);
     }
 
     private void limitTranslation() {
