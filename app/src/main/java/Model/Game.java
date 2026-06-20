@@ -3,6 +3,7 @@ package Model;
 import java.util.Random;
 
 public class Game {
+    private int time;
     private int bombs;
     private int flags;
     private boolean firstHit;
@@ -12,13 +13,14 @@ public class Game {
     public void setUpGame(int row, int column, int bombs) {
         this.bombs = bombs;
         this.flags = bombs;
-        this.firstHit = false;
+        this.firstHit = true;
         values = new int[row][column];
         revealed = new boolean[row][column];
         flagged = new boolean[row][column];
     }
 
     public void setUpBombs(int firstRow, int firstCol) {
+        this.firstHit = false;
         Random random = new Random();
         int placedBombs = 0;
         int rows = values.length;
@@ -64,10 +66,26 @@ public class Game {
     }
 
     public void hitTile(int row, int column) {
-        if (!firstHit)
-            setUpBombs(row, column);
-        else {
 
-        }
+    }
+    
+    public int getTime() {
+        return time;
+    }
+
+    public void increaseTime() {
+        this.time++;
+    }
+
+    public boolean isFirstHit() {
+        return firstHit;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public void setFlags(int flags) {
+        this.flags = flags;
     }
 }
