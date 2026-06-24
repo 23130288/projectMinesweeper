@@ -35,18 +35,17 @@ public class StartingMenuActivity extends AppCompatActivity {
         Button btnPlay = findViewById(R.id.btnPlay);
 
         btnPlay.setOnClickListener(v -> {
-            Intent intent = new Intent(
-                    StartingMenuActivity.this,
-                    ModeMenuActivity.class);
-
+            Intent intent = new Intent(StartingMenuActivity.this, ModeMenuActivity.class);
             startActivity(intent);
         });
 
         imgAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(
-                    StartingMenuActivity.this,
-                    LoginActivity.class);
-
+            Intent intent;
+            if (Session.isLoggedIn) {
+                intent = new Intent(StartingMenuActivity.this, UserInterfaceActivity.class);
+            } else {
+                intent = new Intent(StartingMenuActivity.this, LoginActivity.class);
+            }
             startActivity(intent);
         });
     }
@@ -54,7 +53,6 @@ public class StartingMenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         if(Session.isLoggedIn){
             imgAvatar.setImageResource(R.drawable.avatar_admin);
         }
