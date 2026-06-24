@@ -3,7 +3,6 @@ package com.example.project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,8 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.project.firebase.ResetPasswordActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import Model.Session;
+import Model.User;
+import database.DatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,9 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvForgotPassword;
     private TextView tvRegister;
     private FirebaseAuth mAuth;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +71,16 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Session.isLoggedIn = true;
                             Session.email = email;
+
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            Session.user = new User(firebaseUser != null ? firebaseUser.getUid() : null, email, email, "", 0);
+
+                            // database
+                            DatabaseHelper helper = new DatabaseHelper(this);
+                            helper.getWritableDatabase();
+
                             Toast.makeText(  this,   "Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this,StartingMenuActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, StartingMenuActivity.class);
                             startActivity(intent);
                             finish();
             }else {

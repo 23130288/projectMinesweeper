@@ -6,13 +6,15 @@ public class Game {
     private int time;
     private int bombs;
     private int flags;
+    private String difficulty;
     private boolean firstHit;
     private int[][] values; // 0-8, -1 means bomb
     private boolean[][] revealed;
     private boolean[][] flagged;
-    public void setUpGame(int row, int column, int bombs) {
+    public void setUpGame(int row, int column, int bombs, String diff) {
         this.bombs = bombs;
         this.flags = bombs;
+        this.difficulty = diff;
         this.firstHit = true;
         values = new int[row][column];
         revealed = new boolean[row][column];
@@ -63,6 +65,14 @@ public class Game {
                 values[row][col] = count;
             }
         }
+    }
+
+    public void win() {
+        // todo create win condition
+
+        // achievement
+        AchievementManager am = new AchievementManager();
+        am.checkAchievements(Session.user.uid, difficulty, time);
     }
 
     public void hitTile(int row, int column) {

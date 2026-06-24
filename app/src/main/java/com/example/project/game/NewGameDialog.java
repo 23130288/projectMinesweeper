@@ -20,6 +20,7 @@ public class NewGameDialog extends DialogFragment {
     private int rows = 9;
     private int cols = 9;
     private int mines = 10;
+    private String diff = "easy";
     private Button btnEasy, btnMedium, btnHard, btnExtreme;
 
     @Nullable
@@ -41,30 +42,35 @@ public class NewGameDialog extends DialogFragment {
             rows = 9;
             cols = 9;
             mines = 10;
+            diff = "easy";
         });
         btnMedium.setOnClickListener(v -> {
             selectDifficulty(btnMedium);
             rows = 16;
             cols = 16;
             mines = 40;
+            diff = "medium";
         });
         btnHard.setOnClickListener(v -> {
             selectDifficulty(btnHard);
             rows = 16;
             cols = 30;
             mines = 99;
+            diff = "hard";
         });
         btnExtreme.setOnClickListener(v -> {
             selectDifficulty(btnExtreme);
             rows = 24;
             cols = 30;
             mines = 160;
+            diff = "extreme";
         });
         btnStart.setOnClickListener(v -> {
             Intent intent = new Intent(requireActivity(), GameClassicActivity.class);
             intent.putExtra("rows", rows);
             intent.putExtra("columns", cols);
             intent.putExtra("mines", mines);
+            intent.putExtra("diff", diff);
             startActivity(intent);
             dismiss();
         });

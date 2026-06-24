@@ -7,7 +7,6 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -44,9 +43,10 @@ public class GameClassicActivity extends AppCompatActivity {
         int rows = getIntent().getIntExtra("rows", 9);
         int cols = getIntent().getIntExtra("columns", 9);
         int mines = getIntent().getIntExtra("mines", 10);
+        String diff = getIntent().getStringExtra("diff");
 
         game = new Game();
-        game.setUpGame(rows, cols, mines);
+        game.setUpGame(rows, cols, mines, diff);
 
         ImageView btnReset = findViewById(R.id.btnReset);
         btnReset.setOnClickListener(v -> {
