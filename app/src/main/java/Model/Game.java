@@ -70,6 +70,9 @@ public class Game {
     public void win() {
         // todo create win condition
 
+        // update user stats;
+
+
         // achievement
         AchievementManager am = new AchievementManager();
         am.checkAchievements(Session.user.uid, difficulty, time);

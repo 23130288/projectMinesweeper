@@ -16,28 +16,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("""
             CREATE TABLE achievements (
-                aid INTEGER PRIMARY KEY NOT NULL,
+                aid TEXT PRIMARY KEY NOT NULL,
                 name TEXT NOT NULL,
                 description TEXT
-            )
-        """);
-
-        sqLiteDatabase.execSQL("""
-            CREATE TABLE user_achievements (
-                uid TEXT NOT NULL,
-                aid TEXT NOT NULL,
-                unlock_time INTEGER NOT NULL,
-                PRIMARY KEY(uid, aid),
-                FOREIGN KEY(aid) REFERENCES achievements(aid)
-            );
-        """);
-
-        sqLiteDatabase.execSQL("""
-            CREATE TABLE user_stats (
-                uid TEXT PRIMARY KEY,
-                games_played INTEGER DEFAULT 0,
-                games_won INTEGER DEFAULT 0,
-                total_tiles_opened INTEGER DEFAULT 0
             )
         """);
         insertDefaultAchievements(sqLiteDatabase);
