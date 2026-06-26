@@ -21,5 +21,11 @@ public class UserInterfaceActivity extends AppCompatActivity {
             Intent intent = new Intent(this, StartingMenuActivity.class);
             startActivity(intent);
         });
+
+        Button btnPlayGame = findViewById(R.id.btnPlayGame);
+        btnPlayGame.setOnClickListener(v -> {
+            Intent intent = new Intent(this, StartingMenuActivity.class);
+            startActivity(intent);
+        });
     }
 }
