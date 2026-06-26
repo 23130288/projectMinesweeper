@@ -13,6 +13,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 // 1. Thêm các import của Firebase
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import Model.UserStats;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText edtEmail;
@@ -64,8 +67,16 @@ public class RegisterActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             // Đăng ký thành công, bạn có thể chuyển màn hình ở đây
-                            Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                            finish(); // Đóng màn hình đăng ký để quay lại màn hình trước đó
+                            String uid = mAuth.getCurrentUser().getUid();
+                            UserStats stats = new UserStats(0, 0, 0);
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("users")
+                                    .document(uid)
+                                    .set(stats)
+                                    .addOnSuccessListener(unused -> {
+                                Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                                finish(); // Đóng màn hình đăng ký để quay lại màn hình trước đó
+                            });
                         } else {
                             // Đăng ký thất bại (ví dụ: email sai định dạng, mật khẩu quá ngắn hoặc email đã tồn tại)
                             String errorMessage = task.getException() != null ? task.getException().getMessage() : "Lỗi không xác định";

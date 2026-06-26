@@ -4,4 +4,6 @@ public class Session {
     public static boolean isLoggedIn = false;
     public static String email = "";
     public static User user;
+    public static UserStats userStats;
+
 }

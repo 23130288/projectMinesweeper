@@ -14,9 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.project.firebase.ResetPasswordActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import Model.Session;
 import Model.User;
+import Model.UserStats;
 import database.DatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
@@ -73,7 +75,16 @@ public class LoginActivity extends AppCompatActivity {
                             Session.email = email;
 
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            Session.user = new User(firebaseUser != null ? firebaseUser.getUid() : null, email, email, "", 0);
+                            String uid = firebaseUser != null ? firebaseUser.getUid() : null;
+                            Session.user = new User(uid, email, email, "", 0);
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("users")
+                                    .document(uid)
+                                    .get()
+                                    .addOnSuccessListener(document -> {
+                                        Session.userStats = document.toObject(UserStats.class);
+                                    });
 
                             // database
                             DatabaseHelper helper = new DatabaseHelper(this);
