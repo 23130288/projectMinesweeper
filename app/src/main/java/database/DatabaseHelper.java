@@ -27,12 +27,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("""
             INSERT INTO achievements (aid, name, description)
             VALUES
-            ('first_win', 'first_win', 'Thắng 1 trận'),
-            ('win_10', 'win_10', 'Thắng 10 trận'),
-            ('speed_easy', 'speed_easy', 'Hoàn thành Easy dưới 20 giây'),
-            ('speed_medium', 'speed_medium', 'Hoàn thành Medium dưới 60 giây'),
-            ('speed_hard', 'speed_hard', 'Hoàn thành Hard dưới 150 giây'),
-            ('speed_extreme', 'speed_extreme', 'Hoàn thành Extreme dưới 300 giây')
+            ('login', 'login', 'login into the game'),
+            ('first_win', 'first_win', 'Win 1 game'),
+            ('win_10', 'win_10', 'Win 10 games'),
+            ('speed_easy', 'speed_easy', 'Finish Easy under 20s'),
+            ('speed_medium', 'speed_medium', 'Finish Medium under 60s'),
+            ('speed_hard', 'speed_hard', 'Finish Hard under 150s'),
+            ('speed_extreme', 'speed_extreme', 'Finish Extreme under 360s')
     """);
     }
 

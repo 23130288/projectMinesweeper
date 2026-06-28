@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import Model.AchievementManager;
 import Model.Session;
 import Model.User;
 import Model.UserStats;
@@ -40,12 +41,25 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         if(mAuth.getCurrentUser() != null){
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            String email = firebaseUser.getEmail();
             Session.isLoggedIn = true;
-            Session.email = mAuth.getCurrentUser().getEmail();
+            Session.email = email;
+
+            String uid = firebaseUser.getUid();
+            Session.user = new User(uid, email, email, "", 0);
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("users")
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(document -> {
+                        Session.userStats = document.toObject(UserStats.class);
+                    });
+
             Intent intent = new Intent(LoginActivity.this, StartingMenuActivity.class);
             startActivity(intent);
             finish();
-
         }
 
         edtEmail = findViewById(R.id.edtEmail);
@@ -89,6 +103,9 @@ public class LoginActivity extends AppCompatActivity {
                             // database
                             DatabaseHelper helper = new DatabaseHelper(this);
                             helper.getWritableDatabase();
+
+                            AchievementManager achievementManager = new AchievementManager();
+                            achievementManager.unlockAchievement(uid, "login");
 
                             Toast.makeText(  this,   "Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, StartingMenuActivity.class);
