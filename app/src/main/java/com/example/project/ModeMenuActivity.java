@@ -21,7 +21,8 @@ public class ModeMenuActivity extends AppCompatActivity {
 
         Button btnModeClassic = findViewById(R.id.btnModeClassic);
         btnModeClassic.setOnClickListener(v -> {
-            NewGameDialog dialog = new NewGameDialog();dialog.show(getSupportFragmentManager(), "NEW_GAME_DIALOG");
+            NewGameDialog dialog = new NewGameDialog();
+            dialog.show(getSupportFragmentManager(), "NEW_GAME_DIALOG");
         });
     }
 }
