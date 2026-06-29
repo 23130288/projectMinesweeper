@@ -33,6 +33,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".firebase.ChangePasswordActivity" />
         <activity android:name=".firebase.ResetPasswordActivity" />
+        <activity android:name=".game.LeaderboardActivity" />
     </application>
 
 </manifest>

@@ -1,0 +1,229 @@
+package com.example.project.game;
+
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.project.R;
+import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import java.util.ArrayList;
+import java.util.List;
+import com.example.project.adapter.LeaderboardAdapter;
+import Model.LeaderBoard;
+import com.google.firebase.auth.FirebaseAuth;
+
+public class LeaderboardActivity extends AppCompatActivity {
+
+    private static final String TAG = "DEBUG_LEADERBOARD";
+
+    private AutoCompleteTextView spinnerMode, spinnerDiff;
+    private RecyclerView rvLeaderboard;
+    private TextView tvEmptyMessage;
+    private MaterialCardView layoutMyRank;
+    private TextView tvMyRank, tvMyPlayerId, tvMyScore, tvMyTime;
+    private LeaderboardAdapter adapter;
+    private final List<LeaderBoard> leaderboardList = new ArrayList<>();
+
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String selectedMode = "";
+    private String selectedDiff = "";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_leaderboard);
+
+        initViews();
+        loadModesFromFirestore();
+    }
+
+    private void initViews() {
+        spinnerMode = findViewById(R.id.spinnerMode);
+        spinnerDiff = findViewById(R.id.spinnerDiff);
+        rvLeaderboard = findViewById(R.id.rvLeaderboard);
+        tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
+
+        layoutMyRank = findViewById(R.id.layoutMyRank);
+        tvMyRank = findViewById(R.id.tvMyRank);
+        tvMyPlayerId = findViewById(R.id.tvMyPlayerId);
+        tvMyScore = findViewById(R.id.tvMyScore);
+        tvMyTime = findViewById(R.id.tvMyTime);
+
+        rvLeaderboard.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new LeaderboardAdapter(leaderboardList);
+        rvLeaderboard.setAdapter(adapter);
+    }
+
+    private void loadModesFromFirestore() {
+        db.collection("Leaderboards")
+                .whereEqualTo("isActive", true)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<String> modes = new ArrayList<>();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        modes.add(doc.getId());
+                    }
+
+                    if (modes.isEmpty()) {
+                        updateUI(true);
+                        return;
+                    }
+
+                    ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, modes);
+                    spinnerMode.setAdapter(modeAdapter);
+
+                    selectedMode = modes.get(0);
+                    spinnerMode.setText(selectedMode, false);
+
+                    loadDifficultiesDynamically(selectedMode);
+
+                    spinnerMode.setOnItemClickListener((parent, view, position, id) -> {
+                        selectedMode = parent.getItemAtPosition(position).toString();
+                        resetDiffAndLeaderboard();
+                        loadDifficultiesDynamically(selectedMode);
+                    });
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error loading modes", e));
+    }
+
+    private void loadDifficultiesDynamically(String mode) {
+        List<String> potentialDiffs = List.of("easy", "medium", "hard");
+        List<String> activeDiffs = new ArrayList<>();
+        final int[] remainingChecks = {potentialDiffs.size()};
+
+        for (String diff : potentialDiffs) {
+            db.collection("Leaderboards")
+                    .document(mode)
+                    .collection(diff)
+                    .limit(1)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                            activeDiffs.add(diff);
+                        }
+
+                        remainingChecks[0]--;
+                        if (remainingChecks[0] == 0) {
+                            updateDiffSpinner(activeDiffs);
+                        }
+                    });
+        }
+    }
+
+    private void updateDiffSpinner(List<String> diffs) {
+        if (diffs.isEmpty()) {
+            updateUI(true);
+            return;
+        }
+
+        ArrayAdapter<String> diffAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, diffs);
+        spinnerDiff.setAdapter(diffAdapter);
+
+        selectedDiff = diffs.get(0);
+        spinnerDiff.setText(selectedDiff, false);
+
+        loadLeaderboardRecords(selectedMode, selectedDiff);
+
+        spinnerDiff.setOnItemClickListener((parent, view, position, id) -> {
+            selectedDiff = parent.getItemAtPosition(position).toString();
+            loadLeaderboardRecords(selectedMode, selectedDiff);
+        });
+    }
+
+    private void loadLeaderboardRecords(String mode, String diff) {
+        if (mode.isEmpty() || diff.isEmpty()) return;
+
+        db.collection("Leaderboards")
+                .document(mode)
+                .collection(diff)
+                .orderBy("score", Query.Direction.DESCENDING)
+                .orderBy("completedTime", Query.Direction.ASCENDING)
+                .limit(100)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    leaderboardList.clear();
+                    List<LeaderBoard> items = queryDocumentSnapshots.toObjects(LeaderBoard.class);
+                    leaderboardList.addAll(items);
+
+                    updateUI(leaderboardList.isEmpty());
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error loading records", e));
+    }
+
+    private void updateUI(boolean isEmpty) {
+        if (isEmpty) {
+            rvLeaderboard.setVisibility(View.GONE);
+            tvEmptyMessage.setVisibility(View.VISIBLE);
+            layoutMyRank.setVisibility(View.GONE);
+        } else {
+            rvLeaderboard.setVisibility(View.VISIBLE);
+            tvEmptyMessage.setVisibility(View.GONE);
+            checkAndShowMyRank();
+        }
+    }
+
+    private void checkAndShowMyRank() {
+        String currentUid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                : "HNUNJojeicQ6CIgmmNxIA3S4gOk2";
+
+        boolean currentNotFound = true;
+
+        for (int i = 0; i < leaderboardList.size(); i++) {
+            LeaderBoard item = leaderboardList.get(i);
+
+            if (item.getUserId().equals(currentUid)) {
+                currentNotFound = false;
+                int myRankPosition = i + 1;
+
+                tvMyRank.setText(String.valueOf(myRankPosition));
+                tvMyPlayerId.setText(String.format("%s (Bạn)", item.getUserId()));
+                tvMyScore.setText(String.format("%d Pts", item.getScore()));
+                tvMyTime.setText(String.format("⏱️ %02d:%02d", item.getCompletedTime() / 60, item.getCompletedTime() % 60));
+
+                if (tvMyRank.getBackground() instanceof GradientDrawable) {
+                    GradientDrawable rankBg = (GradientDrawable) tvMyRank.getBackground();
+                    switch (myRankPosition) {
+                        case 1:
+                            rankBg.setColor(Color.parseColor("#F9AB00"));
+                            break;
+                        case 2:
+                            rankBg.setColor(Color.parseColor("#9AA0A6"));
+                            break;
+                        case 3:
+                            rankBg.setColor(Color.parseColor("#DE8544"));
+                            break;
+                        default:
+                            rankBg.setColor(Color.parseColor("#757575"));
+                            break;
+                    }
+                }
+
+                layoutMyRank.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
+
+        if (currentNotFound) {
+            layoutMyRank.setVisibility(View.GONE);
+        }
+    }
+
+    private void resetDiffAndLeaderboard() {
+        selectedDiff = "";
+        spinnerDiff.setText("");
+        leaderboardList.clear();
+        adapter.notifyDataSetChanged();
+    }
+}
