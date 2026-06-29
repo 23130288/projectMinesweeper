@@ -33,7 +33,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         int rank = position + 1;
 
         holder.tvRank.setText(String.valueOf(rank));
-        holder.tvPlayerId.setText(item.getUserId());
+        holder.tvPlayerId.setText(item.getPlayerName());
         holder.tvScore.setText(String.format("%d Pts", item.getScore()));
         holder.tvTime.setText(String.format("⏱️ %02d:%02d", item.getCompletedTime() / 60, item.getCompletedTime() % 60));
 

@@ -4,17 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import com.example.project.firebase.Test;
 import com.example.project.game.LeaderboardActivity;
 import com.google.android.material.imageview.ShapeableImageView;
-
 import Model.Session;
 
 public class StartingMenuActivity extends AppCompatActivity {
@@ -36,7 +32,6 @@ public class StartingMenuActivity extends AppCompatActivity {
         });
 
         Button btnPlay = findViewById(R.id.btnPlay);
-
         btnPlay.setOnClickListener(v -> {
             Intent intent = new Intent(StartingMenuActivity.this, ModeMenuActivity.class);
             startActivity(intent);
@@ -57,15 +52,21 @@ public class StartingMenuActivity extends AppCompatActivity {
             Intent intent = new Intent(StartingMenuActivity.this, LeaderboardActivity.class);
             startActivity(intent);
         });
+
+        Button btnQuit = findViewById(R.id.btnQuit);
+        btnQuit.setOnClickListener(v -> finish());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(Session.isLoggedIn){
-            imgAvatar.setImageResource(R.drawable.avatar_admin);
-        }
-        else{
+        com.google.firebase.auth.FirebaseAuth mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            Session.isLoggedIn = true;
+            com.example.project.utils.UserManager.fetchAndSyncSession(imgAvatar, null, null);
+        } else {
+            Session.isLoggedIn = false;
             imgAvatar.setImageResource(R.drawable.default_avatar);
         }
     }
