@@ -10,7 +10,7 @@ public class Game {
     private boolean firstHit;
     private boolean win;
     private boolean lose;
-    private int[][] values; // 0-8, -1 means bomb
+    private int[][] values; // 0-8, -1 means bomb -2 bomb kích hoạt
     private boolean[][] revealed;
     private boolean[][] flagged;
 
@@ -88,26 +88,81 @@ public class Game {
         // Không mở nếu đã mở hoặc đã cắm cờ
         if (revealed[row][col] || flagged[row][col])
             return;
-
         // Trúng bomb
         if (values[row][col] == -1) {
             revealed[row][col] = true;
+            values[row][col] = -2;
+            revealAllBombs();
             lose = true;
             return;
         }
-
         // Mở ô
         reveal(row, col);
-
         // Kiểm tra thắng
         checkWin();
     }
 
-    private void reveal(int row, int col) {
+    public void chord(int row, int col) {
+        if (lose || win)
+            return;
 
+        // Chỉ áp dụng cho ô đã mở và là ô số
+        if (!revealed[row][col])
+            return;
+        if (values[row][col] <= 0)
+            return;
+        int flagCount = 0;
+
+        // Đếm số cờ xung quanh
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (i == 0 && j == 0)
+                    continue;
+                int r = row + i;
+                int c = col + j;
+                if (r < 0 || r >= values.length || c < 0 || c >= values[0].length)
+                    continue;
+                if (flagged[r][c])
+                    flagCount++;
+            }
+        }
+
+        // Chưa đủ cờ
+        if (flagCount != values[row][col])
+            return;
+
+        // Mở các ô chưa mở và chưa cắm cờ
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+
+                if (i == 0 && j == 0)
+                    continue;
+
+                int r = row + i;
+                int c = col + j;
+
+                if (r < 0 || r >= values.length || c < 0 || c >= values[0].length)
+                    continue;
+
+                if (revealed[r][c] || flagged[r][c])
+                    continue;
+
+                // Nếu có bom không được cắm cờ -> thua
+                if (values[r][c] == -1) {
+                    revealed[r][c] = true;
+                    revealAllBombs();
+                    lose = true;
+                    return;
+                }
+                reveal(r, c);
+            }
+        }
+        checkWin();
+    }
+
+    private void reveal(int row, int col) {
         int rows = values.length;
         int cols = values[0].length;
-
         if (row < 0 || row >= rows || col < 0 || col >= cols)
             return;
 
@@ -126,19 +181,15 @@ public class Game {
         // Mở 8 ô xung quanh
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-
                 if (i == 0 && j == 0)
                     continue;
-
                 reveal(row + i, col + j);
             }
         }
     }
 
     private void checkWin() {
-
         int opened = 0;
-
         for (int i = 0; i < revealed.length; i++) {
             for (int j = 0; j < revealed[0].length; j++) {
 
@@ -170,7 +221,24 @@ public class Game {
             flags--;
         }
     }
+    public void revealAllBombs() {
+        for (int i = 0; i < values.length; i++) {
+            for (int j = 0; j < values[0].length; j++) {
 
+                // Hiện tất cả bom chưa được mở
+                if (values[i][j] == -1) {
+                    revealed[i][j] = true;
+                }
+
+                // Cắm cờ sai
+                if (flagged[i][j] && values[i][j] != -1) {
+                    values[i][j] = -3;
+                    flagged[i][j] = false;   // bỏ cờ
+                    revealed[i][j] = true;
+                }
+            }
+        }
+    }
     public int getTime() {
         return time;
     }
@@ -191,13 +259,23 @@ public class Game {
         this.flags = flags;
     }
 
-    public boolean isWin() {return win;}
+    public boolean isWin() {
+        return win;
+    }
 
-    public boolean isLose() {return lose;}
+    public boolean isLose() {
+        return lose;
+    }
 
-    public boolean isRevealed(int row, int col) {return revealed[row][col];}
+    public boolean isRevealed(int row, int col) {
+        return revealed[row][col];
+    }
 
-    public boolean isFlagged(int row, int col) {return flagged[row][col];}
+    public boolean isFlagged(int row, int col) {
+        return flagged[row][col];
+    }
 
-    public int getValue(int row, int col) {return values[row][col];}
+    public int getValue(int row, int col) {
+        return values[row][col];
+    }
 }

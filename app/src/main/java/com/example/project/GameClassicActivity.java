@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.project.game.NewGameDialog;
 
@@ -57,6 +59,15 @@ public class GameClassicActivity extends AppCompatActivity {
         btnReset.setOnClickListener(v -> {
             NewGameDialog dialog = new NewGameDialog();
             dialog.show(getSupportFragmentManager(), "NEW_GAME_DIALOG");
+        });
+
+        ImageView btnFlag = findViewById(R.id.btnFlag);
+        btnFlag.setOnClickListener(v -> {
+            flagMode = !flagMode;
+            // Đổi giao diện nút cờ (không bắt buộc)
+            btnFlag.setAlpha(flagMode ? 0.5f : 1f);
+            // Cập nhật toàn bộ bàn cờ
+            updateBoard();
         });
 
         // set up zoom, dragging
@@ -153,14 +164,15 @@ public class GameClassicActivity extends AppCompatActivity {
     }
 
     private void openTile(int row, int col) {
-
         if (game.isFirstHit()) {
             game.setUpBombs(row, col);
             timerRunnable.run();
         }
-
-        game.hitTile(row, col);
-
+        if (game.isRevealed(row, col)) {
+            game.chord(row, col);
+        } else {
+            game.hitTile(row, col);
+        }
         updateBoard();
 
         if (game.isLose()) {
@@ -173,40 +185,37 @@ public class GameClassicActivity extends AppCompatActivity {
     }
 
     private void toggleFlag(int row, int col) {
-
         game.toggleFlag(row, col);
-
         TextView txtBombs = findViewById(R.id.txtBombs);
         txtBombs.setText(String.format(Locale.getDefault(),
                 "%03d", game.getFlags()));
-
         updateBoard();
     }
 
     private void updateBoard() {
-
         int rows = tiles.length;
         int cols = tiles[0].length;
-
         for (int row = 0; row < rows; row++) {
-
             for (int col = 0; col < cols; col++) {
-
                 ImageButton tile = tiles[row][col];
-
                 if (game.isFlagged(row, col)) {
-
                     tile.setImageResource(R.drawable.flag_tile);
-
                 } else if (!game.isRevealed(row, col)) {
-
-                    tile.setImageResource(R.drawable.unrevealed_tile);
-
+                    if (flagMode) {
+                        tile.setImageResource(R.drawable.unrevealed_tile_flag);
+                    } else {
+                        tile.setImageResource(R.drawable.unrevealed_tile);
+                    }
                 } else {
-
                     int value = game.getValue(row, col);
-
                     switch (value) {
+                        case -3:
+                            tile.setImageResource(R.drawable.flag_tile_wrong);
+                            break;
+
+                        case -2:
+                            tile.setImageResource(R.drawable.bomb_tile_triggered);
+                            break;
 
                         case -1:
                             tile.setImageResource(R.drawable.bomb_tile);
