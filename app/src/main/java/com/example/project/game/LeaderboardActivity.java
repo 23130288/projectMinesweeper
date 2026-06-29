@@ -12,7 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.project.R;
+import com.example.project.utils.ImageUtils;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -62,8 +65,58 @@ public class LeaderboardActivity extends AppCompatActivity {
         rvLeaderboard.setLayoutManager(new LinearLayoutManager(this));
         adapter = new LeaderboardAdapter(leaderboardList);
         rvLeaderboard.setAdapter(adapter);
+        adapter.setOnItemClickListener(item -> {
+            showUserProfileDialog(item.getUserId());
+        });
+        layoutMyRank.setOnClickListener(v -> {
+            String currentUid = FirebaseAuth.getInstance().getCurrentUser() != null
+                    ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                    : "HNUNJojeicQ6CIgmmNxIA3S4gOk2";
+            showUserProfileDialog(currentUid);
+        });
     }
+    private void showUserProfileDialog(String userId) {
+        BottomSheetDialog bottomSheetDialog =
+                new BottomSheetDialog(this);
 
+        View view = getLayoutInflater().inflate(R.layout.dialog_user_info, null);
+        bottomSheetDialog.setContentView(view);
+
+        ShapeableImageView imgDialogAvatar = view.findViewById(R.id.imgDialogAvatar);
+        TextView txtDialogName = view.findViewById(R.id.txtDialogName);
+        android.widget.Button btnDialogClose = view.findViewById(R.id.btnDialogClose);
+
+        btnDialogClose.setOnClickListener(v -> bottomSheetDialog.dismiss());
+
+        txtDialogName.setText("Đang tải...");
+
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String name = documentSnapshot.getString("name");
+                        String base64Avatar = documentSnapshot.getString("avatar");
+
+                        txtDialogName.setText(name != null && !name.isEmpty() ? name : "Chưa đặt tên");
+
+                        if (base64Avatar != null && !base64Avatar.isEmpty()) {
+                            android.graphics.Bitmap bitmap = ImageUtils.base64ToBitmap(base64Avatar);
+                            if (bitmap != null) {
+                                imgDialogAvatar.setImageBitmap(bitmap);
+                            }
+                        } else {
+                            imgDialogAvatar.setImageResource(R.drawable.default_avatar);
+                        }
+                    } else {
+                        txtDialogName.setText("Người dùng không tồn tại");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    txtDialogName.setText("Lỗi tải thông tin");
+                    Log.e(TAG, "Error loading detailed user info", e);
+                });
+
+        bottomSheetDialog.show();
+    }
     private void loadModesFromFirestore() {
         db.collection("Leaderboards")
                 .whereEqualTo("isActive", true)
