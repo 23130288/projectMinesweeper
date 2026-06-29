@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,20 +12,26 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-// 1. Thêm các import của Firebase
+import com.example.project.utils.CropImageHelper;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import Model.UserStats;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
+
+    private ShapeableImageView imgRegisterAvatar;
+    private EditText edtName;
     private EditText edtEmail;
     private EditText edtPassword;
     private EditText edtConfirmPassword;
     private Button btnRegister;
 
-    // 2. Khai báo biến FirebaseAuth
     private FirebaseAuth mAuth;
+    private String encodedAvatarBase64 = "";
+    private CropImageHelper cropImageHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,51 +41,76 @@ public class RegisterActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top,
-                    systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // 3. Khởi tạo Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
+        imgRegisterAvatar = findViewById(R.id.imgRegisterAvatar);
+        edtName = findViewById(R.id.edtName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
 
+        cropImageHelper = new CropImageHelper(this, (bitmap, base64String) -> {
+            imgRegisterAvatar.setImageBitmap(bitmap);
+            encodedAvatarBase64 = base64String;
+        });
+
+        imgRegisterAvatar.setOnClickListener(v -> cropImageHelper.openGallery());
+
         btnRegister.setOnClickListener(v -> {
+            String name = edtName.getText().toString().trim();
             String email = edtEmail.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
             String confirm = edtConfirmPassword.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
-
+            if (password.length() < 6) {
+                Toast.makeText(this, "Mật khẩu phải lớn hơn hoặc bằng 6 ký tự", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (!password.equals(confirm)) {
                 Toast.makeText(this, "Mật khẩu không khớp", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // 4. Gọi phương thức đăng ký của Firebase
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-                            // Đăng ký thành công, bạn có thể chuyển màn hình ở đây
                             String uid = mAuth.getCurrentUser().getUid();
-                            UserStats stats = new UserStats(0, 0, 0);
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                            Map<String, Object> userMap = new HashMap<>();
+                            userMap.put("uid", uid);
+                            userMap.put("name", name);
+                            userMap.put("email", email);
+                            userMap.put("avatar", encodedAvatarBase64);
+
+                            userMap.put("gamesPlayed", 0);
+                            userMap.put("gamesWon", 0);
+                            userMap.put("highestScore", 0);
+
                             db.collection("users")
                                     .document(uid)
-                                    .set(stats)
+                                    .set(userMap)
                                     .addOnSuccessListener(unused -> {
-                                Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                finish(); // Đóng màn hình đăng ký để quay lại màn hình trước đó
-                            });
+                                        Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+
+                                        Intent intent = new Intent(RegisterActivity.this, UserInterfaceActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(RegisterActivity.this, "Lưu thông tin thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
                         } else {
-                            // Đăng ký thất bại (ví dụ: email sai định dạng, mật khẩu quá ngắn hoặc email đã tồn tại)
                             String errorMessage = task.getException() != null ? task.getException().getMessage() : "Lỗi không xác định";
                             Toast.makeText(RegisterActivity.this, "Đăng ký thất bại: " + errorMessage, Toast.LENGTH_LONG).show();
                         }
