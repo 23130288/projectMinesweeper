@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -74,6 +75,8 @@ public class LeaderboardActivity extends AppCompatActivity {
                     : "HNUNJojeicQ6CIgmmNxIA3S4gOk2";
             showUserProfileDialog(currentUid);
         });
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
     private void showUserProfileDialog(String userId) {
         BottomSheetDialog bottomSheetDialog =

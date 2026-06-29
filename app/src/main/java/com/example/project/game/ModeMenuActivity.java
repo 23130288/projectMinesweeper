@@ -1,14 +1,11 @@
-package com.example.project;
+package com.example.project.game;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.project.game.NewGameDialog;
-import com.google.android.material.card.MaterialCardView;
+import com.example.project.R;
 
 public class ModeMenuActivity extends AppCompatActivity {
     @Override

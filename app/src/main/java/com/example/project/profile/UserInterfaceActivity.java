@@ -1,4 +1,4 @@
-package com.example.project;
+package com.example.project.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.project.firebase.ChangePasswordActivity;
+
+import com.example.project.R;
+import com.example.project.StartingMenuActivity;
 import com.example.project.game.AchievementDialog;
 import com.example.project.utils.CropImageHelper;
 import com.example.project.utils.UserManager;
@@ -81,6 +83,8 @@ public class UserInterfaceActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ChangePasswordActivity.class);
             startActivity(intent);
         });
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void showEditNameDialog() {

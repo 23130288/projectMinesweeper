@@ -1,9 +1,10 @@
-package com.example.project.firebase;
+package com.example.project.auth;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,5 +58,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         }
                     });
         });
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 }

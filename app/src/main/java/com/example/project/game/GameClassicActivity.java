@@ -1,10 +1,9 @@
-package com.example.project;
+package com.example.project.game;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -16,9 +15,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.example.project.game.NewGameDialog;
+import com.example.project.R;
 
 import java.util.Locale;
 
