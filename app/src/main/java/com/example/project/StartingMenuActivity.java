@@ -3,6 +3,7 @@ package com.example.project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.project.firebase.Test;
+import com.example.project.game.LeaderboardActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import Model.Session;
@@ -46,6 +49,12 @@ public class StartingMenuActivity extends AppCompatActivity {
             } else {
                 intent = new Intent(StartingMenuActivity.this, LoginActivity.class);
             }
+            startActivity(intent);
+        });
+
+        ImageButton btnLeaderboard = findViewById(R.id.btnLeaderboard);
+        btnLeaderboard.setOnClickListener(v -> {
+            Intent intent = new Intent(StartingMenuActivity.this, LeaderboardActivity.class);
             startActivity(intent);
         });
     }

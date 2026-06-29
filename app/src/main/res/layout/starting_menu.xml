@@ -15,6 +15,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="100dp"/>
+    <ImageButton
+        android:id="@+id/btnLeaderboard"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="0dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:padding="4dp"
+        android:src="@drawable/ic_leaderboard"
+        android:contentDescription="Bảng xếp hạng"
+        app:tint="#0F9D58"
+        app:layout_constraintBottom_toBottomOf="@id/imgAvatar"
+        app:layout_constraintEnd_toStartOf="@id/imgAvatar"
+        app:layout_constraintTop_toTopOf="@id/imgAvatar" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgAvatar"
