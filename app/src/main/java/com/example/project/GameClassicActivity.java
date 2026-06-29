@@ -32,9 +32,13 @@ public class GameClassicActivity extends AppCompatActivity {
     private float lastY;
     private boolean isDragging = false;
     private boolean isScaling = false;
+    private boolean flagMode = false;
+    private ImageButton[][] tiles;
+
     Game game;
 
     private Runnable timerRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +51,12 @@ public class GameClassicActivity extends AppCompatActivity {
 
         game = new Game();
         game.setUpGame(rows, cols, mines, diff);
+        tiles = new ImageButton[rows][cols];
 
         ImageView btnReset = findViewById(R.id.btnReset);
         btnReset.setOnClickListener(v -> {
-            NewGameDialog dialog = new NewGameDialog();dialog.show(getSupportFragmentManager(), "NEW_GAME_DIALOG");
+            NewGameDialog dialog = new NewGameDialog();
+            dialog.show(getSupportFragmentManager(), "NEW_GAME_DIALOG");
         });
 
         // set up zoom, dragging
@@ -63,6 +69,7 @@ public class GameClassicActivity extends AppCompatActivity {
                 isScaling = true;
                 return true;
             }
+
             @Override
             public boolean onScale(@NonNull ScaleGestureDetector detector) {
                 scaleFactor *= detector.getScaleFactor();
@@ -77,6 +84,7 @@ public class GameClassicActivity extends AppCompatActivity {
                 limitTranslation();
                 return true;
             }
+
             @Override
             public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
                 isScaling = false;
@@ -93,6 +101,8 @@ public class GameClassicActivity extends AppCompatActivity {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 ImageButton tile = new ImageButton(this);
+
+                tiles[row][col] = tile;
                 tile.setImageResource(R.drawable.unrevealed_tile);
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams();
 
@@ -106,7 +116,21 @@ public class GameClassicActivity extends AppCompatActivity {
 
                 int finalRow = row;
                 int finalCol = col;
-                tile.setOnClickListener(v -> openTile(finalRow, finalCol));
+                tile.setOnClickListener(v -> {
+                    if (flagMode)
+                        toggleFlag(finalRow, finalCol);
+                    else
+                        openTile(finalRow, finalCol);
+                });
+
+                tile.setOnLongClickListener(v -> {
+                    if (flagMode)
+                        openTile(finalRow, finalCol);
+                    else
+                        toggleFlag(finalRow, finalCol);
+
+                    return true;
+                });
                 gridBoard.addView(tile);
             }
         }
@@ -129,11 +153,104 @@ public class GameClassicActivity extends AppCompatActivity {
     }
 
     private void openTile(int row, int col) {
+
         if (game.isFirstHit()) {
             game.setUpBombs(row, col);
             timerRunnable.run();
         }
+
         game.hitTile(row, col);
+
+        updateBoard();
+
+        if (game.isLose()) {
+            // TODO hiện dialog thua
+        }
+
+        if (game.isWin()) {
+            // TODO hiện dialog thắng
+        }
+    }
+
+    private void toggleFlag(int row, int col) {
+
+        game.toggleFlag(row, col);
+
+        TextView txtBombs = findViewById(R.id.txtBombs);
+        txtBombs.setText(String.format(Locale.getDefault(),
+                "%03d", game.getFlags()));
+
+        updateBoard();
+    }
+
+    private void updateBoard() {
+
+        int rows = tiles.length;
+        int cols = tiles[0].length;
+
+        for (int row = 0; row < rows; row++) {
+
+            for (int col = 0; col < cols; col++) {
+
+                ImageButton tile = tiles[row][col];
+
+                if (game.isFlagged(row, col)) {
+
+                    tile.setImageResource(R.drawable.flag_tile);
+
+                } else if (!game.isRevealed(row, col)) {
+
+                    tile.setImageResource(R.drawable.unrevealed_tile);
+
+                } else {
+
+                    int value = game.getValue(row, col);
+
+                    switch (value) {
+
+                        case -1:
+                            tile.setImageResource(R.drawable.bomb_tile);
+                            break;
+
+                        case 0:
+                            tile.setImageResource(R.drawable.revealed_tile);
+                            break;
+
+                        case 1:
+                            tile.setImageResource(R.drawable.revealed_tile_1);
+                            break;
+
+                        case 2:
+                            tile.setImageResource(R.drawable.revealed_tile_2);
+                            break;
+
+                        case 3:
+                            tile.setImageResource(R.drawable.revealed_tile_3);
+                            break;
+
+                        case 4:
+                            tile.setImageResource(R.drawable.revealed_tile_4);
+                            break;
+
+                        case 5:
+                            tile.setImageResource(R.drawable.revealed_tile_5);
+                            break;
+
+                        case 6:
+                            tile.setImageResource(R.drawable.revealed_tile_6);
+                            break;
+
+                        case 7:
+                            tile.setImageResource(R.drawable.revealed_tile_7);
+                            break;
+
+                        case 8:
+                            tile.setImageResource(R.drawable.revealed_tile_8);
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     private void limitTranslation() {
@@ -160,7 +277,7 @@ public class GameClassicActivity extends AppCompatActivity {
                 isDragging = true;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (!isScaling && ev.getPointerCount() == 1 && isDragging) {
+                if (!isScaling && scaleFactor > 1.0f && ev.getPointerCount() == 1 && isDragging) {
                     float dx = ev.getRawX() - lastX;
                     float dy = ev.getRawY() - lastY;
 
