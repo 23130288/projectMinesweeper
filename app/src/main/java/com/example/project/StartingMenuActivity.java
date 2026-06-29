@@ -9,7 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.project.auth.LoginActivity;
 import com.example.project.game.LeaderboardActivity;
+import com.example.project.game.ModeMenuActivity;
+import com.example.project.profile.UserInterfaceActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 import Model.Session;
 

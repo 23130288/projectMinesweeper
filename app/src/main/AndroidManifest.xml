@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project">
         <activity
-            android:name=".RegisterActivity"
+            android:name=".auth.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".StartingMenuActivity"
@@ -24,15 +24,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ModeMenuActivity" />
-        <activity android:name=".GameClassicActivity" />
-        <activity android:name=".UserInterfaceActivity" />
+        <activity android:name=".game.ModeMenuActivity" />
+        <activity android:name=".game.GameClassicActivity" />
+        <activity android:name=".profile.UserInterfaceActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".auth.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".firebase.ChangePasswordActivity" />
-        <activity android:name=".firebase.ResetPasswordActivity" />
+        <activity android:name=".profile.ChangePasswordActivity" />
+        <activity android:name=".auth.ResetPasswordActivity" />
         <activity android:name=".game.LeaderboardActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

@@ -1,9 +1,10 @@
-package com.example.project;
+package com.example.project.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +13,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.project.R;
+import com.example.project.profile.UserInterfaceActivity;
 import com.example.project.utils.CropImageHelper;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -116,5 +119,7 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     });
         });
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
     }
 }
