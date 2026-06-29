@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             Session.email = email;
 
             String uid = firebaseUser.getUid();
-            Session.user = new User(uid, email, email, "", 0);
+            Session.user = new User(uid, email, email, "", 0, "");
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("users")
@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             String uid = firebaseUser != null ? firebaseUser.getUid() : null;
-                            Session.user = new User(uid, email, email, "", 0);
+                            Session.user = new User(uid, email, email, "", 0, "");
 
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             db.collection("users")

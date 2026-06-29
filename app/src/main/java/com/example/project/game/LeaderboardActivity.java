@@ -153,10 +153,39 @@ public class LeaderboardActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     leaderboardList.clear();
                     List<LeaderBoard> items = queryDocumentSnapshots.toObjects(LeaderBoard.class);
-                    leaderboardList.addAll(items);
 
-                    updateUI(leaderboardList.isEmpty());
+                    if (items.isEmpty()) {
+                        updateUI(true);
+                        adapter.notifyDataSetChanged();
+                        return;
+                    }
+
+                    leaderboardList.addAll(items);
+                    updateUI(false);
                     adapter.notifyDataSetChanged();
+
+                    final int[] remainingUsers = {items.size()};
+                    for (int i = 0; i < items.size(); i++) {
+                        final int index = i;
+                        LeaderBoard record = items.get(index);
+
+                        db.collection("users").document(record.getUserId()).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    if (userDoc.exists()) {
+                                        String name = userDoc.getString("name");
+                                        if (name != null && !name.isEmpty()) {
+                                            leaderboardList.get(index).setPlayerName(name);
+                                        }
+                                    }
+                                })
+                                .addOnCompleteListener(task -> {
+                                    remainingUsers[0]--;
+                                    if (remainingUsers[0] == 0) {
+                                        adapter.notifyDataSetChanged();
+                                        checkAndShowMyRank();
+                                    }
+                                });
+                    }
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Error loading records", e));
     }
@@ -188,7 +217,10 @@ public class LeaderboardActivity extends AppCompatActivity {
                 int myRankPosition = i + 1;
 
                 tvMyRank.setText(String.valueOf(myRankPosition));
-                tvMyPlayerId.setText(String.format("%s (Bạn)", item.getUserId()));
+
+                String displayName = item.getPlayerName() != null ? item.getPlayerName() : item.getUserId();
+                tvMyPlayerId.setText(String.format("%s (Bạn)", displayName));
+
                 tvMyScore.setText(String.format("%d Pts", item.getScore()));
                 tvMyTime.setText(String.format("⏱️ %02d:%02d", item.getCompletedTime() / 60, item.getCompletedTime() % 60));
 
