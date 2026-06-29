@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +16,13 @@ import Model.LeaderBoard;
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.ViewHolder> {
 
     private final List<LeaderBoard> list;
+    private OnItemClickListener clickListener;
+    public interface OnItemClickListener {
+        void onItemClick(LeaderBoard item);
+    }
+    public void setOnItemClickListener(OnItemClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
 
     public LeaderboardAdapter(List<LeaderBoard> list) {
         this.list = list;
@@ -46,6 +54,11 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
                 default -> rankBackground.setColor(Color.parseColor("#757575"));
             }
         }
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null && position != RecyclerView.NO_POSITION) {
+                clickListener.onItemClick(item);
+            }
+        });
     }
 
     @Override
