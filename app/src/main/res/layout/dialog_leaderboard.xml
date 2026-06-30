@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="@color/gray">
 
         <!-- Header -->
         <LinearLayout
@@ -26,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/tiny5"
+                android:textColor="@color/black"
                 android:gravity="center"
                 android:text="Leaderboard"
                 android:textSize="24sp" />
@@ -34,7 +36,8 @@
                 android:id="@+id/btnClose"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:fontFamily="@font/tiny5"
+                app:backgroundTint="@null"
+                android:background="@drawable/icon_cancel"
                 android:text="X" />
         </LinearLayout>
 
@@ -45,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:fontFamily="@font/tiny5"
+            android:textColor="@color/black"
             android:gravity="center"
             android:text="Easy"
             android:textSize="18sp" />
@@ -60,6 +64,7 @@
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/tiny5"
+                android:textColor="@color/black"
                 android:gravity="center"
                 android:text="#"/>
 
@@ -68,12 +73,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/tiny5"
+                android:textColor="@color/black"
                 android:text="Player"/>
 
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/tiny5"
+                android:textColor="@color/black"
                 android:gravity="end"
                 android:text="Time"/>
         </LinearLayout>

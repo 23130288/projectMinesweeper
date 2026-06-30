@@ -23,10 +23,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-import Model.AchievementManager;
+
 import Model.Session;
 import Model.User;
 import Model.UserStats;
+import database.AchievementFirebase;
 import database.DatabaseHelper;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -127,8 +128,8 @@ public class RegisterActivity extends AppCompatActivity {
                                         helper.getWritableDatabase();
 
                                         // Mở thành tựu đăng nhập nếu bạn dùng
-                                        AchievementManager achievementManager = new AchievementManager();
-                                        achievementManager.unlockAchievement(uid, "login");
+                                        AchievementFirebase af = new AchievementFirebase();
+                                        af.unlockAchievement(uid, "login");
 
                                         Toast.makeText(RegisterActivity.this,
                                                 "Đăng ký thành công!",
