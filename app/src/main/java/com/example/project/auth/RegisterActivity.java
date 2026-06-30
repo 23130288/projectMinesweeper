@@ -23,6 +23,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import Model.AchievementManager;
+import Model.Session;
+import Model.User;
+import Model.UserStats;
+import database.DatabaseHelper;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private ShapeableImageView imgRegisterAvatar;
@@ -103,7 +109,30 @@ public class RegisterActivity extends AppCompatActivity {
                                     .document(uid)
                                     .set(userMap)
                                     .addOnSuccessListener(unused -> {
-                                        Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+
+                                        // Khởi tạo Session giống LoginActivity
+                                        Session.isLoggedIn = true;
+                                        Session.email = email;
+
+                                        Session.user = new User(uid, name, email, "", 0, encodedAvatarBase64);
+
+                                        UserStats stats = new UserStats();
+                                        stats.setGamesPlayed(0);
+                                        stats.setGamesWon(0);
+                                        stats.setTotalTilesOpened(0);
+                                        Session.userStats = stats;
+
+                                        // Khởi tạo Database SQLite nếu cần
+                                        DatabaseHelper helper = new DatabaseHelper(RegisterActivity.this);
+                                        helper.getWritableDatabase();
+
+                                        // Mở thành tựu đăng nhập nếu bạn dùng
+                                        AchievementManager achievementManager = new AchievementManager();
+                                        achievementManager.unlockAchievement(uid, "login");
+
+                                        Toast.makeText(RegisterActivity.this,
+                                                "Đăng ký thành công!",
+                                                Toast.LENGTH_SHORT).show();
 
                                         Intent intent = new Intent(RegisterActivity.this, UserInterfaceActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -111,7 +140,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         finish();
                                     })
                                     .addOnFailureListener(e -> {
-                                        Toast.makeText(RegisterActivity.this, "Lưu thông tin thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(RegisterActivity.this,
+                                                "Lưu thông tin thất bại: " + e.getMessage(),
+                                                Toast.LENGTH_SHORT).show();
                                     });
                         } else {
                             String errorMessage = task.getException() != null ? task.getException().getMessage() : "Lỗi không xác định";
