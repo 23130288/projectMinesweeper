@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.project.R;
 import com.example.project.StartingMenuActivity;
 import com.example.project.game.AchievementDialog;
+import com.example.project.game.ModeMenuActivity;
 import com.example.project.utils.CropImageHelper;
 import com.example.project.utils.UserManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -83,6 +84,13 @@ public class UserInterfaceActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ChangePasswordActivity.class);
             startActivity(intent);
         });
+
+        Button btnPlayGame = findViewById(R.id.btnPlayGame);
+        btnPlayGame.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ModeMenuActivity.class);
+            startActivity(intent);
+        });
+
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
     }
