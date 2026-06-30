@@ -10,7 +10,7 @@
     app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp">
 
@@ -30,9 +30,10 @@
 
         <TextView
             android:id="@+id/tvPlayerName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="User_ID_or_Name"
@@ -67,10 +68,21 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0000s"
+                android:text="⏱️ 00:00"
                 android:fontFamily="@font/tiny5"
                 android:textSize="12sp"
                 android:textColor="?attr/colorOnSurfaceVariant"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvCompletedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30/06 18:45"
+                android:fontFamily="@font/tiny5"
+                android:textSize="10sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:layout_marginTop="2dp"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
 
