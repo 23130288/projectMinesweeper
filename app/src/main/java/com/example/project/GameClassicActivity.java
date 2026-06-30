@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,14 +20,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.project.game.NewGameDialog;
+import com.google.firebase.firestore.MetadataChanges;
 
 import java.util.Locale;
 
 import Model.Game;
+import Model.Session;
 
 public class GameClassicActivity extends AppCompatActivity {
     FrameLayout boardContainer;
     GridLayout gridBoard;
+    TextView txtCoinsHeader;
 
     private ScaleGestureDetector scaleDetector;
     private float scaleFactor = 1.0f;
@@ -40,6 +44,7 @@ public class GameClassicActivity extends AppCompatActivity {
     Game game;
 
     private Runnable timerRunnable;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +157,7 @@ public class GameClassicActivity extends AppCompatActivity {
 
         // set up time
         TextView txtTime = findViewById(R.id.txtTime);
-        Handler handler = new Handler(Looper.getMainLooper());
+
         timerRunnable = new Runnable() {
             @Override
             public void run() {
@@ -161,9 +166,29 @@ public class GameClassicActivity extends AppCompatActivity {
                 handler.postDelayed(this, 1000);
             }
         };
+        // hiển thị số tiền khi vừa vào game
+        txtCoinsHeader = findViewById(R.id.txtCoinsHeader);
+        if (Session.user != null && Session.user.uid != null) {
+            com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("UserCoins").document(Session.user.uid).addSnapshotListener((value, error) -> {
+                if(value != null && value.exists()&& value.contains("coins")){
+                    // kéo xu trên mạng về nạp vào RAM
+                    Session.coins = value.getLong("coins").intValue();
+                    // hiển thị lên Header
+                    txtCoinsHeader.setText(String.format(Locale.getDefault(), "%03d", Session.coins));
+                }
+            });
+        }else{
+            // nếu chơi offline không đăng nhập
+            txtCoinsHeader.setText(String.format(Locale.getDefault(),"%03d",Session.coins));
+        }
+
     }
 
     private void openTile(int row, int col) {
+        // nếu game đã thắng hoặc thua thì không xử lý click nữa
+        if(game.isLose() || game.isWin()){
+            return;
+        }
         if (game.isFirstHit()) {
             game.setUpBombs(row, col);
             timerRunnable.run();
@@ -176,11 +201,35 @@ public class GameClassicActivity extends AppCompatActivity {
         updateBoard();
 
         if (game.isLose()) {
-            // TODO hiện dialog thua
+            // Dừng đồng hồ tính giờ lại
+            handler.removeCallbacks(timerRunnable);
+            // cập nhật lại số xu mới lên Header
+            txtCoinsHeader.setText(String.format(Locale.getDefault(),"%03d",Session.coins));
+
+            // Hiện Dialog thua cuộc
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("💥 GAME OVER")
+                    .setMessage("Bạn đã dẫm phải mìn!")
+                    .setCancelable(false)
+                    .setPositiveButton("Chơi lại", (dialog, which) -> recreate())
+                    .setNegativeButton("Thoát", (dialog, which) -> finish())
+                    .show();
         }
 
         if (game.isWin()) {
-            // TODO hiện dialog thắng
+            // Dừng đồng hồ tính giờ lại
+            handler.removeCallbacks(timerRunnable);
+            // cập nhật lại số xu mới lên Header
+            txtCoinsHeader.setText(String.format(Locale.getDefault(),"%03d",Session.coins));
+
+            // Hiện Dialog Chiến thắng kèm thời gian hoàn thành
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("🎉 CHIẾN THẮNG!")
+                    .setMessage("Thời gian của bạn: " + game.getTime() + " giây.")
+                    .setCancelable(false)
+                    .setPositiveButton("Ván mới", (dialog, which) -> recreate())
+                    .setNegativeButton("Menu", (dialog, which) -> finish())
+                    .show();
         }
     }
 

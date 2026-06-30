@@ -1,5 +1,10 @@
 package Model;
 
+import android.util.Log;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
 import java.util.Random;
 
 public class Game {
@@ -72,14 +77,14 @@ public class Game {
     }
 
     public void win() {
-        // todo create win condition
-
+        this.win=true; // xác nhận trạng thái thắng của game
         // update user stats;
 
 
         // achievement
         AchievementManager am = new AchievementManager();
         am.checkAchievements(Session.user.uid, difficulty, time);
+        handleEndGameRewards(true);
     }
 
     public void hitTile(int row, int col) {
@@ -94,6 +99,7 @@ public class Game {
             values[row][col] = -2;
             revealAllBombs();
             lose = true;
+            handleEndGameRewards(false);
             return;
         }
         // Mở ô
@@ -152,6 +158,7 @@ public class Game {
                     revealed[r][c] = true;
                     revealAllBombs();
                     lose = true;
+                    handleEndGameRewards(false);
                     return;
                 }
                 reveal(r, c);
@@ -199,7 +206,7 @@ public class Game {
         }
 
         if (opened == revealed.length * revealed[0].length - bombs) {
-            win = true;
+            win();
         }
     }
 
@@ -278,4 +285,51 @@ public class Game {
     public int getValue(int row, int col) {
         return values[row][col];
     }
+
+    public void handleEndGameRewards(boolean isWon) {
+        // Người dùng phải đăng nhập
+        if (Session.user == null || Session.user.uid == null) {
+            Log.d("GameFirestore", "Người chơi chưa đăng nhập, không thể lưu kết quả.");
+            return;
+        }
+        String uid = Session.user.uid;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        //  Tính toán tiền xu thưởng
+        int coinReward = 0;
+        if (isWon) {
+            coinReward = (this.bombs * 10) + 50;
+        } else {
+            int correctFlags = 0;
+            if (values != null && flagged != null) {
+                for (int i = 0; i < values.length; i++) {
+                    for (int j = 0; j < values[0].length; j++) {
+                        if (values[i][j] == -1 && flagged[i][j]) {
+                            correctFlags++;
+                        }
+                    }
+                }
+            }
+            coinReward = correctFlags * 10;
+        }
+
+        //  Cập nhật tiền lên Firestore
+        if (coinReward > 0) {
+            Session.coins += coinReward;
+            java.util.Map<String, Object> coinData = new java.util.HashMap<>();
+            coinData.put("coins", Session.coins);
+
+            db.collection("UserCoins").document(uid).set(coinData)
+                    .addOnSuccessListener(aVoid -> Log.d("GameFirestore", "Đã update lại tiền trên Firestore!"));
+        }
+
+        //  Phần xử lý kỷ lục / bảng xếp hạng khi thắng cuộc
+        if (isWon) {
+            // TODO: Thành viên khác triển khai phương thức tính điểm (score)
+            // và lưu lại kết quả của người chơi lên Firebase Leaderboard tại đây.
+            // Ví dụ cấu trúc mong muốn: Leaderboards -> classic -> [difficulty] -> [uid]
+            Log.d("GameFirestore", "Người chơi đã thắng! Chờ logic tính điểm và Leaderboard của thành viên khác.");
+        }
+    }
 }
+
