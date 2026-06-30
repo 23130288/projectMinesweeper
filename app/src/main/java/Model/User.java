@@ -18,4 +18,12 @@ public class User {
         this.avatarId = avatarId;
         this.avatar = avatar;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
