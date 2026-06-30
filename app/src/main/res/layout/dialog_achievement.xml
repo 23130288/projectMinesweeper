@@ -8,6 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/gray"
         android:orientation="vertical"
         android:padding="16dp">
         <!-- Header -->
@@ -15,24 +16,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/tiny5"
                 android:text="Achievements"
-                android:textStyle="bold"
-                android:textSize="22sp"/>
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/btnClose"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="X"/>
+                android:background="@drawable/icon_cancel"
+                android:text="X"
+                app:backgroundTint="@null" />
         </LinearLayout>
         <!-- Content -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAchievements"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import database.AchievementFirebase;
+
 public class Game {
     private int time;
     private int bombs;
@@ -93,8 +95,8 @@ public class Game {
             // update user stats;
             Session.userStats.updateWin(revealed.length * revealed[0].length - this.bombs);
             // achievement
-            AchievementManager am = new AchievementManager();
-            am.checkAchievements(Session.user.uid, difficulty, time);
+            AchievementFirebase af = new AchievementFirebase();
+            af.checkAchievements(Session.user.uid, difficulty, time);
             handleEndGameRewards(true);
         }
     }

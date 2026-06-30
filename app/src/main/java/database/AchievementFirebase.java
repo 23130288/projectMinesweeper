@@ -1,4 +1,4 @@
-package Model;
+package database;
 
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -6,7 +6,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AchievementManager {
+import Model.Session;
+
+public class AchievementFirebase {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     public void checkAchievements(String uid, String difficulty, int timeSeconds) {
         if (Session.userStats.getGamesWon() >= 1) {

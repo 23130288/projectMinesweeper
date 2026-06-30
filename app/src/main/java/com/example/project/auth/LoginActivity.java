@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import Model.AchievementManager;
+import database.AchievementFirebase;
 import Model.Session;
 import Model.User;
 import Model.UserStats;
@@ -120,8 +120,8 @@ public class LoginActivity extends AppCompatActivity {
                             DatabaseHelper helper = new DatabaseHelper(this);
                             helper.getWritableDatabase();
 
-                            AchievementManager achievementManager = new AchievementManager();
-                            achievementManager.unlockAchievement(uid, "login");
+                            AchievementFirebase af = new AchievementFirebase();
+                            af.unlockAchievement(uid, "login");
 
                             Toast.makeText(  this,   "Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, StartingMenuActivity.class);

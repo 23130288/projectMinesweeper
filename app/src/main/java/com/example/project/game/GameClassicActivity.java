@@ -75,6 +75,9 @@ public class GameClassicActivity extends AppCompatActivity {
             updateBoard();
         });
 
+        ImageView btnSetting = findViewById(R.id.btnSetting);
+        btnSetting.setOnClickListener(v -> {finish();});
+
         // gợi ý mở ô trên bàn
         ImageView btnHint = findViewById(R.id.btnHint);
         btnHint.setOnClickListener(v -> {

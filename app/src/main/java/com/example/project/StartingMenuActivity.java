@@ -15,7 +15,12 @@ import com.example.project.game.LeaderboardActivity;
 import com.example.project.game.ModeMenuActivity;
 import com.example.project.profile.UserInterfaceActivity;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import Model.Session;
+import Model.User;
+import Model.UserStats;
 
 public class StartingMenuActivity extends AppCompatActivity {
     private ShapeableImageView imgAvatar;
@@ -67,10 +72,35 @@ public class StartingMenuActivity extends AppCompatActivity {
         com.google.firebase.auth.FirebaseAuth mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            String email = firebaseUser.getEmail();
             Session.isLoggedIn = true;
+            Session.email = email;
+
+            String uid = firebaseUser.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("users")
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(document -> {
+                        if (document.exists()) {
+                            String name = document.getString("name");
+                            Session.user = new User(uid, name, email, "", 0, "");
+
+                            UserStats stats = new UserStats();
+                            stats.setGamesPlayed(document.getLong("gamesPlayed") == null ? 0 : document.getLong("gamesPlayed").intValue());
+                            stats.setGamesWon(document.getLong("gamesWon") == null ? 0 : document.getLong("gamesWon").intValue());
+                            stats.setTotalTilesOpened(document.getLong("totalTilesOpened") == null ? 0 : document.getLong("totalTilesOpened").intValue());
+                            Session.userStats = stats;
+                        }
+                    });
             com.example.project.utils.UserManager.fetchAndSyncSession(imgAvatar, null, null);
         } else {
             Session.isLoggedIn = false;
+            Session.email = "";
+            Session.coins = 0;
+            Session.user = null;
+            Session.userStats = null;
             imgAvatar.setImageResource(R.drawable.default_avatar);
         }
     }
