@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class Game {
@@ -284,6 +286,20 @@ public class Game {
 
     public int getValue(int row, int col) {
         return values[row][col];
+    }
+
+    public int[] getHint() {
+        if (lose || win || firstHit) return null;
+        List<int[]> safeTiles = new ArrayList<>();
+        for (int r = 0; r < values.length; r++) {
+            for (int c = 0; c < values[0].length; c++) {
+                if (!revealed[r][c] && values[r][c] != -1 && !flagged[r][c]) {
+                    safeTiles.add(new int[]{r, c});
+                }
+            }
+        }
+        if (safeTiles.isEmpty()) return null;
+        return safeTiles.get(new Random().nextInt(safeTiles.size()));
     }
 
     public void handleEndGameRewards(boolean isWon) {
