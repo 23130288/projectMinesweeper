@@ -1,4 +1,4 @@
-package com.example.project;
+package com.example.project.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +11,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.project.firebase.ResetPasswordActivity;
+import com.example.project.R;
+import com.example.project.StartingMenuActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -47,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
             Session.email = email;
 
             String uid = firebaseUser.getUid();
-            Session.user = new User(uid, email, email, "", 0);
+            Session.user = new User(uid, email, email, "", 0, "");
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("users")
@@ -90,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             String uid = firebaseUser != null ? firebaseUser.getUid() : null;
-                            Session.user = new User(uid, email, email, "", 0);
+                            Session.user = new User(uid, email, email, "", 0, "");
 
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             db.collection("users")
