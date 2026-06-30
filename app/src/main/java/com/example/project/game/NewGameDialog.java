@@ -74,6 +74,30 @@ public class NewGameDialog extends DialogFragment {
             dismiss();
         });
 
+        // set up leaderboard buttons
+        view.findViewById(R.id.btnEasyLeaderboard).setOnClickListener(v -> {
+            LeaderboardDialog dialog = new LeaderboardDialog();
+            dialog.setDifficulty("easy");
+            dialog.show(getParentFragmentManager(), "LEADERBOARD");
+        });
+
+        view.findViewById(R.id.btnMediumLeaderboard).setOnClickListener(v -> {
+            LeaderboardDialog dialog = new LeaderboardDialog();
+            dialog.setDifficulty("medium");
+            dialog.show(getParentFragmentManager(), "LEADERBOARD");
+        });
+
+        view.findViewById(R.id.btnHardLeaderboard).setOnClickListener(v -> {
+            LeaderboardDialog dialog = new LeaderboardDialog();
+            dialog.setDifficulty("hard");
+            dialog.show(getParentFragmentManager(), "LEADERBOARD");
+        });
+
+        view.findViewById(R.id.btnExtremeLeaderboard).setOnClickListener(v -> {
+            LeaderboardDialog dialog = new LeaderboardDialog();
+            dialog.setDifficulty("extreme");
+            dialog.show(getParentFragmentManager(), "LEADERBOARD");
+        });
         return view;
     }
 

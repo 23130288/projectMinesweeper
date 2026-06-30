@@ -1,5 +1,10 @@
 package Model;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Objects;
+
 public class UserStats {
     private int gamesPlayed;
     private int gamesWon;
@@ -35,5 +40,20 @@ public class UserStats {
 
     public void setTotalTilesOpened(int totalTilesOpened) {
         this.totalTilesOpened = totalTilesOpened;
+    }
+
+    public void updateWin(int revealed) {
+        this.gamesPlayed++;
+        this.gamesWon++;
+        this.totalTilesOpened += revealed;
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .update(
+                        "gamesPlayed", this.gamesPlayed,
+                        "gamesWon", this.gamesWon,
+                        "totalTilesOpened", this.totalTilesOpened
+                );
     }
 }

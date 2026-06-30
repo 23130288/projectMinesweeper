@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                             userMap.put("gamesPlayed", 0);
                             userMap.put("gamesWon", 0);
-                            userMap.put("highestScore", 0);
+                            userMap.put("totalTilesOpened", 0);
 
                             db.collection("users")
                                     .document(uid)
