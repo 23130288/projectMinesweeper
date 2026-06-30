@@ -10,7 +10,7 @@
     app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:padding="12dp">
 
@@ -29,13 +29,14 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/tvPlayerId"
-            android:layout_width="0dp"
+            android:id="@+id/tvPlayerName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="User_ID_or_Name"
+            android:fontFamily="@font/tiny5"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -58,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2500 Pts"
+                android:fontFamily="@font/tiny5"
                 android:textColor="?attr/colorPrimary"
                 android:textStyle="bold" />
 
@@ -65,7 +67,8 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⏱️ 00:45"
+                android:text="0000s"
+                android:fontFamily="@font/tiny5"
                 android:textSize="12sp"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 tools:ignore="HardcodedText" />

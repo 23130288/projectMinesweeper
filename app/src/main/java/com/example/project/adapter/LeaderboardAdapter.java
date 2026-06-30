@@ -41,7 +41,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         int rank = position + 1;
 
         holder.tvRank.setText(String.valueOf(rank));
-        holder.tvPlayerId.setText(item.getPlayerName());
+        holder.tvPlayerName.setText(item.getPlayerName());
         holder.tvScore.setText(String.format("%d Pts", item.getScore()));
         holder.tvTime.setText(String.format("⏱️ %02d:%02d", item.getCompletedTime() / 60, item.getCompletedTime() % 60));
 
@@ -67,12 +67,12 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView tvRank, tvPlayerId, tvScore, tvTime;
+        final TextView tvRank, tvPlayerName, tvScore, tvTime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvRank = itemView.findViewById(R.id.tvRank);
-            tvPlayerId = itemView.findViewById(R.id.tvPlayerId);
+            tvPlayerName = itemView.findViewById(R.id.tvPlayerName);
             tvScore = itemView.findViewById(R.id.tvScore);
             tvTime = itemView.findViewById(R.id.tvTime);
         }

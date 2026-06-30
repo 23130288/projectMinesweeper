@@ -184,7 +184,6 @@ public class GameClassicActivity extends AppCompatActivity {
 
         // set up time
         TextView txtTime = findViewById(R.id.txtTime);
-
         timerRunnable = new Runnable() {
             @Override
             public void run() {
@@ -247,8 +246,9 @@ public class GameClassicActivity extends AppCompatActivity {
             // Dừng đồng hồ tính giờ lại
             handler.removeCallbacks(timerRunnable);
             // cập nhật lại số xu mới lên Header
-            txtCoinsHeader.setText(String.format(Locale.getDefault(),"%03d",Session.coins));
-
+            if (Session.user != null) {
+                txtCoinsHeader.setText(String.format(Locale.getDefault(), "%03d", Session.coins));
+            }
             // Hiện Dialog Chiến thắng kèm thời gian hoàn thành
             new android.app.AlertDialog.Builder(this)
                     .setTitle("🎉 CHIẾN THẮNG!")

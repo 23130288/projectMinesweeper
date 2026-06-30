@@ -18,4 +18,5 @@ public class User {
         this.avatarId = avatarId;
         this.avatar = avatar;
     }
+
 }

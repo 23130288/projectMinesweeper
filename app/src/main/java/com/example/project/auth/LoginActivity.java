@@ -48,14 +48,21 @@ public class LoginActivity extends AppCompatActivity {
             Session.email = email;
 
             String uid = firebaseUser.getUid();
-            Session.user = new User(uid, email, email, "", 0, "");
-
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("users")
                     .document(uid)
                     .get()
                     .addOnSuccessListener(document -> {
-                        Session.userStats = document.toObject(UserStats.class);
+                        if (document.exists()) {
+                            String name = document.getString("name");
+                            Session.user = new User(uid, name, email, "", 0, "");
+
+                            UserStats stats = new UserStats();
+                            stats.setGamesPlayed(document.getLong("gamesPlayed") == null ? 0 : document.getLong("gamesPlayed").intValue());
+                            stats.setGamesWon(document.getLong("gamesWon") == null ? 0 : document.getLong("gamesWon").intValue());
+                            stats.setTotalTilesOpened(document.getLong("totalTilesOpened") == null ? 0 : document.getLong("totalTilesOpened").intValue());
+                            Session.userStats = stats;
+                        }
                     });
 
             Intent intent = new Intent(LoginActivity.this, StartingMenuActivity.class);
@@ -91,14 +98,22 @@ public class LoginActivity extends AppCompatActivity {
 
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             String uid = firebaseUser != null ? firebaseUser.getUid() : null;
-                            Session.user = new User(uid, email, email, "", 0, "");
 
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             db.collection("users")
                                     .document(uid)
                                     .get()
                                     .addOnSuccessListener(document -> {
-                                        Session.userStats = document.toObject(UserStats.class);
+                                        if (document.exists()) {
+                                            String name = document.getString("name");
+                                            Session.user = new User(uid, name, email, "", 0, "");
+
+                                            UserStats stats = new UserStats();
+                                            stats.setGamesPlayed(document.getLong("gamesPlayed") == null ? 0 : document.getLong("gamesPlayed").intValue());
+                                            stats.setGamesWon(document.getLong("gamesWon") == null ? 0 : document.getLong("gamesWon").intValue());
+                                            stats.setTotalTilesOpened(document.getLong("totalTilesOpened") == null ? 0 : document.getLong("totalTilesOpened").intValue());
+                                            Session.userStats = stats;
+                                        }
                                     });
 
                             // database

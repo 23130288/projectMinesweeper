@@ -37,44 +37,114 @@
         </LinearLayout>
 
         <!-- Easy -->
-        <Button
-            android:id="@+id/btnEasy"
-            android:layout_width="250dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/tiny5"
-            android:gravity="right"
-            android:text="Easy&#10;9 x 9   10 Mines" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnEasy"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/tiny5"
+                android:gravity="right"
+                android:text="Easy&#10;9 x 9   10 Mines" />
+
+            <ImageButton
+                android:id="@+id/btnEasyLeaderboard"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/icon_leaderboard"
+                android:scaleType="centerCrop"
+                android:background="@null"
+                android:contentDescription="Easy Leaderboard"/>
+        </LinearLayout>
+
 
         <!-- Medium -->
-        <Button
-            android:id="@+id/btnMedium"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/tiny5"
-            android:gravity="right"
-            android:text="Medium&#10;16 x 16   40 Mines" />
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnMedium"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/tiny5"
+                android:gravity="right"
+                android:text="Medium&#10;16 x 16   40 Mines" />
+
+            <ImageButton
+                android:id="@+id/btnMediumLeaderboard"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/icon_leaderboard"
+                android:scaleType="centerCrop"
+                android:background="@null"
+                android:contentDescription="Medium Leaderboard"/>
+        </LinearLayout>
+
 
         <!-- Hard -->
-        <Button
-            android:id="@+id/btnHard"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/tiny5"
-            android:gravity="right"
-            android:text="Hard&#10;30 x 16   99 Mines" />
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnHard"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/tiny5"
+                android:gravity="right"
+                android:text="Hard&#10;30 x 16   99 Mines" />
+
+            <ImageButton
+                android:id="@+id/btnHardLeaderboard"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/icon_leaderboard"
+                android:scaleType="centerCrop"
+                android:background="@null"
+                android:contentDescription="Hard Leaderboard"/>
+        </LinearLayout>
 
         <!-- Extreme -->
-        <Button
-            android:id="@+id/btnExtreme"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/tiny5"
-            android:gravity="right"
-            android:text="Extreme&#10;30 x 24   160 Mines" />
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnExtreme"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/tiny5"
+                android:gravity="right"
+                android:text="Extreme&#10;30 x 24   160 Mines" />
+
+            <ImageButton
+                android:id="@+id/btnExtremeLeaderboard"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/icon_leaderboard"
+                android:scaleType="centerCrop"
+                android:background="@null"
+                android:contentDescription="Extreme Leaderboard"/>
+        </LinearLayout>
 
         <!-- Start -->
         <Button
