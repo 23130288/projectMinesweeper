@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.project.adapter.LeaderboardAdapter;
+
 import Model.LeaderBoard;
 import com.google.firebase.auth.FirebaseAuth;
 

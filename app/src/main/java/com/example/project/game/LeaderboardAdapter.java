@@ -1,22 +1,26 @@
-package com.example.project.adapter;
+package com.example.project.game;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.project.R;
+import com.google.firebase.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import Model.LeaderBoard;
 
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.ViewHolder> {
 
     private final List<LeaderBoard> list;
     private OnItemClickListener clickListener;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
     public interface OnItemClickListener {
         void onItemClick(LeaderBoard item);
     }
@@ -42,8 +46,17 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
 
         holder.tvRank.setText(String.valueOf(rank));
         holder.tvPlayerName.setText(item.getPlayerName());
-        holder.tvScore.setText(String.format("%d Pts", item.getScore()));
-        holder.tvTime.setText(String.format("⏱️ %02d:%02d", item.getCompletedTime() / 60, item.getCompletedTime() % 60));
+        holder.tvScore.setText(String.format(Locale.getDefault(), "%d Pts", item.getScore()));
+        holder.tvTime.setText(String.format(Locale.getDefault(), "⏱️ %02d:%02d", item.getCompletedTime() / 60, item.getCompletedTime() % 60));
+
+        // Xử lý hiển thị ngày giờ hoàn thành kỷ lục
+        Timestamp timestamp = item.getCompletedAt();
+        if (timestamp != null) {
+            holder.tvCompletedAt.setVisibility(View.VISIBLE);
+            holder.tvCompletedAt.setText(dateFormat.format(timestamp.toDate()));
+        } else {
+            holder.tvCompletedAt.setVisibility(View.GONE);
+        }
 
         if (holder.tvRank.getBackground() instanceof GradientDrawable) {
             GradientDrawable rankBackground = (GradientDrawable) holder.tvRank.getBackground();
@@ -67,7 +80,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView tvRank, tvPlayerName, tvScore, tvTime;
+        final TextView tvRank, tvPlayerName, tvScore, tvTime, tvCompletedAt;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +88,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
             tvPlayerName = itemView.findViewById(R.id.tvPlayerName);
             tvScore = itemView.findViewById(R.id.tvScore);
             tvTime = itemView.findViewById(R.id.tvTime);
+            tvCompletedAt = itemView.findViewById(R.id.tvCompletedAt); // Ánh xạ TextView mới
         }
     }
 }
