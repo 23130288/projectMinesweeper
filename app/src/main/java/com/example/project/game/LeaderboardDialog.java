@@ -3,7 +3,6 @@ package com.example.project.game;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +26,11 @@ import java.util.List;
 import Model.LeaderBoard;
 
 public class LeaderboardDialog extends DialogFragment {
+
     private String difficulty;
     private LeaderboardAdapter adapter;
     private final List<LeaderBoard> leaderBoards = new ArrayList<>();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,42 +43,83 @@ public class LeaderboardDialog extends DialogFragment {
         rvLeaderboard.setAdapter(adapter);
 
         TextView txtDiff = view.findViewById(R.id.txtDifficulty);
-        txtDiff.setText(difficulty);
+        txtDiff.setText(difficulty != null ? difficulty : "Easy");
 
-        FirebaseFirestore.getInstance()
-                .collection("Leaderboards")
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String diffPath = difficulty != null ? difficulty.toLowerCase() : "easy";
+
+        db.collection("Leaderboards")
                 .document("classic")
-                .collection(difficulty)
+                .collection(diffPath)
+                .orderBy("score", Query.Direction.DESCENDING)
                 .orderBy("completedTime", Query.Direction.ASCENDING)
                 .limit(10)
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+                .addOnSuccessListener(snapshot -> {
                     leaderBoards.clear();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        Log.d("Leaderboard", doc.getData().toString());
+
+                    for (DocumentSnapshot doc : snapshot) {
                         LeaderBoard item = new LeaderBoard();
-                        item.setUserId(doc.getString("userId"));
-                        item.setPlayerName(doc.getString("username"));
-                        Log.d("Leaderboard", "username = " + item.getPlayerName());
+                        String uid = doc.getString("userId");
+                        if (uid == null || uid.isEmpty()) {
+                            uid = doc.getId();
+                        }
+                        item.setUserId(uid);
+                        item.setPlayerName("Đang tải...");
+
                         Long score = doc.getLong("score");
                         item.setScore(score == null ? 0 : score.intValue());
-                        Long completedTime = doc.getLong("completedTime");
-                        item.setCompletedTime(completedTime == null ? 0 : completedTime.intValue());
+
+                        Long time = doc.getLong("completedTime");
+                        item.setCompletedTime(time == null ? 0 : time.intValue());
+
                         item.setCompletedAt(doc.getTimestamp("completedAt"));
                         leaderBoards.add(item);
                     }
+
                     adapter.notifyDataSetChanged();
+
+                    if (!leaderBoards.isEmpty()) {
+                        loadUserNamesSynchronized();
+                    }
                 });
+
         Button btnClose = view.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(v -> dismiss());
 
         return view;
     }
 
+    private void loadUserNamesSynchronized() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final int total = leaderBoards.size();
+        final int[] counter = {0};
+
+        for (LeaderBoard item : leaderBoards) {
+            String uid = item.getUserId();
+
+            db.collection("users")
+                    .document(uid)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                            String name = task.getResult().getString("name");
+                            if (name != null && !name.isEmpty()) {
+                                item.setPlayerName(name);
+                            }
+                        }
+
+                        counter[0]++;
+                        if (counter[0] == total) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
