@@ -350,15 +350,12 @@ public class Game {
     }
 
     public void handleEndGameRewards(boolean isWon) {
-        // Người dùng phải đăng nhập
         if (Session.user == null || Session.user.uid == null) {
-            Log.d("GameFirestore", "Người chơi chưa đăng nhập, không thể lưu kết quả.");
             return;
         }
         String uid = Session.user.uid;
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        //  Tính toán tiền xu thưởng
         int coinReward = 0;
         if (isWon) {
             coinReward = (this.bombs * 10) + 50;
@@ -376,21 +373,15 @@ public class Game {
             coinReward = correctFlags * 10;
         }
 
-        //  Cập nhật tiền lên Firestore
         if (coinReward > 0) {
             Session.coins += coinReward;
             java.util.Map<String, Object> coinData = new java.util.HashMap<>();
             coinData.put("coins", Session.coins);
-
-            db.collection("UserCoins").document(uid).set(coinData)
-                    .addOnSuccessListener(aVoid -> Log.d("GameFirestore", "Đã update lại tiền trên Firestore!"));
+            db.collection("UserCoins").document(uid).set(coinData);
         }
 
-        //  Phần xử lý kỷ lục / bảng xếp hạng khi thắng cuộc
         if (isWon) {
-
             int score = calculateScore();
-
             String diffPath = this.difficulty != null ? this.difficulty.toLowerCase() : "easy";
 
             com.google.firebase.firestore.DocumentReference leaderboardRef = db.collection("Leaderboards")
@@ -398,14 +389,23 @@ public class Game {
                     .collection(diffPath)
                     .document(uid);
 
-            // 4. Kiểm tra xem user đã có điểm kỷ lục trước đó chưa
             leaderboardRef.get().addOnSuccessListener(documentSnapshot -> {
                 boolean shouldUpdate = false;
 
                 if (documentSnapshot.exists()) {
-                    Long currentRecord = documentSnapshot.getLong("score");
-                    if (currentRecord == null || score > currentRecord) {
-                        shouldUpdate = true; // Điểm mới cao hơn điểm cũ -> Cập nhật
+                    Long currentRecordScore = documentSnapshot.getLong("score");
+                    Long currentRecordTime = documentSnapshot.getLong("completedTime");
+
+                    if (currentRecordScore == null) {
+                        shouldUpdate = true;
+                    } else {
+                        if (score > currentRecordScore) {
+                            shouldUpdate = true;
+                        } else if (score == currentRecordScore) {
+                            if (currentRecordTime == null || this.time < currentRecordTime) {
+                                shouldUpdate = true;
+                            }
+                        }
                     }
                 } else {
                     shouldUpdate = true;
@@ -418,18 +418,9 @@ public class Game {
                     leaderboardData.put("completedTime", this.time);
                     leaderboardData.put("completedAt", com.google.firebase.Timestamp.now());
 
-                    // Lấy tên của user đang đăng nhập
-                    leaderboardData.put("username", Session.user.getName());
-
-                    leaderboardRef.set(leaderboardData)
-                            .addOnSuccessListener(aVoid -> Log.d("GameFirestore", "Đã phá kỷ lục! Đã cập nhật điểm số mới lên Leaderboard: " + score))
-                            .addOnFailureListener(e -> Log.e("GameFirestore", "Lỗi cập nhật Leaderboard: " + e.getMessage()));
-                } else {
-                    Log.d("GameFirestore", "Điểm số (" + score + ") không cao hơn điểm kỷ lục cũ");
+                    leaderboardRef.set(leaderboardData);
                 }
-            }).addOnFailureListener(e -> Log.e("GameFirestore", "Không thể kiểm tra điểm kỷ lục cũ: " + e.getMessage()));
-
-            
+            });
         }
     }
 

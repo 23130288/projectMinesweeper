@@ -14,7 +14,6 @@
         android:padding="16dp"
         android:background="@color/gray">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +40,6 @@
                 android:text="X" />
         </LinearLayout>
 
-        <!-- Difficulty -->
         <TextView
             android:id="@+id/txtDifficulty"
             android:layout_width="match_parent"
@@ -53,7 +51,6 @@
             android:text="Easy"
             android:textSize="18sp" />
 
-        <!-- Header Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +91,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLeaderboard"
             android:layout_width="match_parent"
-            android:layout_height="320dp"/>
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     </LinearLayout>
 
