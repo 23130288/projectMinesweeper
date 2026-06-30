@@ -2,8 +2,14 @@ package Model;
 
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -83,13 +89,24 @@ public class Game {
 
     public void win() {
         this.win=true; // xác nhận trạng thái thắng của game
-        // update user stats;
-
-
-        // achievement
-        AchievementManager am = new AchievementManager();
-        am.checkAchievements(Session.user.uid, difficulty, time);
-        handleEndGameRewards(true);
+        if (Session.user != null) {
+            // update user stats;
+            Session.userStats.updateWin(revealed.length * revealed[0].length - this.bombs);
+            // achievement
+            AchievementManager am = new AchievementManager();
+            am.checkAchievements(Session.user.uid, difficulty, time);
+            handleEndGameRewards(true);
+        }
+    }
+    private int calRevealedTiles() {
+        int total = 0;
+        for (int i = 0; i < revealed.length; i++) {
+            for (int j = 0; j < revealed[0].length; j++) {
+                if (revealed[i][j])
+                    total++;
+            }
+        }
+        return total - 1;
     }
 
     public void hitTile(int row, int col) {
@@ -369,6 +386,7 @@ public class Game {
 
         //  Phần xử lý kỷ lục / bảng xếp hạng khi thắng cuộc
         if (isWon) {
+
             int score = calculateScore();
 
             String diffPath = this.difficulty != null ? this.difficulty.toLowerCase() : "easy";
@@ -408,7 +426,35 @@ public class Game {
                     Log.d("GameFirestore", "Điểm số (" + score + ") không cao hơn điểm kỷ lục cũ");
                 }
             }).addOnFailureListener(e -> Log.e("GameFirestore", "Không thể kiểm tra điểm kỷ lục cũ: " + e.getMessage()));
+
+            
         }
+    }
+
+    private void saveLeaderboard(String difficulty, int score, int time) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference ref = db.collection("Leaderboards")
+                .document("classic")
+                .collection(difficulty)
+                .document(user.getUid());
+        ref.get().addOnSuccessListener(document -> {
+            Long oldCompletedTime = document.getLong("completedTime");
+            if (!document.exists() || oldCompletedTime == null || time < oldCompletedTime) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("userId", user.getUid());
+                data.put("username", Session.user.name);
+                data.put("score", score);
+                data.put("completedTime", time);
+                data.put("completedAt", FieldValue.serverTimestamp());
+                ref.set(data);
+            }
+        });
+    }
+
+    public int calScore() {
+        return 0;
     }
 }
 
