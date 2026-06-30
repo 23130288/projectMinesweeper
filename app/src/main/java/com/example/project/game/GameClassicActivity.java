@@ -13,6 +13,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -72,6 +73,33 @@ public class GameClassicActivity extends AppCompatActivity {
             btnFlag.setAlpha(flagMode ? 0.5f : 1f);
             // Cập nhật toàn bộ bàn cờ
             updateBoard();
+        });
+
+        // gợi ý mở ô trên bàn
+        ImageView btnHint = findViewById(R.id.btnHint);
+        btnHint.setOnClickListener(v -> {
+            if (game.isLose() || game.isWin() || game.isFirstHit()) {
+                return;
+            }
+            if (Session.coins < 50) {
+                Toast.makeText(this, "Không đủ xu (cần 50 xu)!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int[] hint = game.getHint();
+            if (hint != null) {
+                // Trừ tiền
+                Session.coins -= 50;
+                // Cập nhật Firestore
+                if (Session.user != null && Session.user.uid != null) {
+                    com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                            .collection("UserCoins")
+                            .document(Session.user.uid)
+                            .update("coins", Session.coins);
+                }
+                txtCoinsHeader.setText(String.format(Locale.getDefault(), "%03d", Session.coins));
+                // Mở ô gợi ý
+                openTile(hint[0], hint[1]);
+            }
         });
 
         // set up zoom, dragging
