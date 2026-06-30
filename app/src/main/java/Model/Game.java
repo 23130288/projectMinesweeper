@@ -411,10 +411,10 @@ public class Game {
 
                 if (shouldUpdate) {
                     java.util.Map<String, Object> leaderboardData = new java.util.HashMap<>();
-                    leaderboardData.put("uid", uid);
+                    leaderboardData.put("userId", uid);
                     leaderboardData.put("score", score);
-                    leaderboardData.put("time", this.time);
-                    leaderboardData.put("timestamp", com.google.firebase.Timestamp.now());
+                    leaderboardData.put("completedTime", this.time);
+                    leaderboardData.put("completedAt", com.google.firebase.Timestamp.now());
 
                     // Lấy tên của user đang đăng nhập
                     leaderboardData.put("username", Session.user.getName());
