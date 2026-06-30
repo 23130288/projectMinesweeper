@@ -89,6 +89,7 @@ public class GameClassicActivity extends AppCompatActivity {
             if (hint != null) {
                 // Trừ tiền
                 Session.coins -= 50;
+                game.useHint();
                 // Cập nhật Firestore
                 if (Session.user != null && Session.user.uid != null) {
                     com.google.firebase.firestore.FirebaseFirestore.getInstance()
@@ -235,7 +236,7 @@ public class GameClassicActivity extends AppCompatActivity {
             // Hiện Dialog thua cuộc
             new android.app.AlertDialog.Builder(this)
                     .setTitle("💥 GAME OVER")
-                    .setMessage("Bạn đã dẫm phải mìn!")
+                    .setMessage("Bạn đã dẫm phải mìn!\nĐiểm số: " + game.calculateScore())
                     .setCancelable(false)
                     .setPositiveButton("Chơi lại", (dialog, which) -> recreate())
                     .setNegativeButton("Thoát", (dialog, which) -> finish())
@@ -252,7 +253,7 @@ public class GameClassicActivity extends AppCompatActivity {
             // Hiện Dialog Chiến thắng kèm thời gian hoàn thành
             new android.app.AlertDialog.Builder(this)
                     .setTitle("🎉 CHIẾN THẮNG!")
-                    .setMessage("Thời gian của bạn: " + game.getTime() + " giây.")
+                    .setMessage("Thời gian: " + game.getTime() + " giây.\nĐiểm số: " + game.calculateScore())
                     .setCancelable(false)
                     .setPositiveButton("Ván mới", (dialog, which) -> recreate())
                     .setNegativeButton("Menu", (dialog, which) -> finish())

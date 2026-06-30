@@ -12,7 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Game {
@@ -26,6 +28,7 @@ public class Game {
     private int[][] values; // 0-8, -1 means bomb -2 bomb kích hoạt
     private boolean[][] revealed;
     private boolean[][] flagged;
+    private int hintsUsed = 0;
 
     public void setUpGame(int row, int column, int bombs, String diff) {
         this.bombs = bombs;
@@ -305,6 +308,31 @@ public class Game {
         return values[row][col];
     }
 
+    public void useHint() {
+        this.hintsUsed++;
+    }
+
+    public int calculateScore() {
+        int score = 0;
+        int rows = values.length;
+        int cols = values[0].length;
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (flagged[r][c]) {
+                    if (values[r][c] == -1) {
+                        score += 50; // Lá cờ đúng
+                    } else {
+                        score -= 20; // Lá cờ sai
+                    }
+                }
+            }
+        }
+
+        score -= (hintsUsed * 100); // Mỗi hint trừ 100 điểm
+        return Math.max(0, score); // Điểm không âm
+    }
+
     public int[] getHint() {
         if (lose || win || firstHit) return null;
         List<int[]> safeTiles = new ArrayList<>();
@@ -358,11 +386,48 @@ public class Game {
 
         //  Phần xử lý kỷ lục / bảng xếp hạng khi thắng cuộc
         if (isWon) {
-            // TODO: Thành viên khác triển khai phương thức tính điểm (score)
-            // và lưu lại kết quả của người chơi lên Firebase Leaderboard tại đây.
-            saveLeaderboard(difficulty, calScore(), this.time);
-            // Ví dụ cấu trúc mong muốn: Leaderboards -> classic -> [difficulty] -> [uid]
-            Log.d("GameFirestore", "Người chơi đã thắng! Chờ logic tính điểm và Leaderboard của thành viên khác.");
+
+            int score = calculateScore();
+
+            String diffPath = this.difficulty != null ? this.difficulty.toLowerCase() : "easy";
+
+            com.google.firebase.firestore.DocumentReference leaderboardRef = db.collection("Leaderboards")
+                    .document("classic")
+                    .collection(diffPath)
+                    .document(uid);
+
+            // 4. Kiểm tra xem user đã có điểm kỷ lục trước đó chưa
+            leaderboardRef.get().addOnSuccessListener(documentSnapshot -> {
+                boolean shouldUpdate = false;
+
+                if (documentSnapshot.exists()) {
+                    Long currentRecord = documentSnapshot.getLong("score");
+                    if (currentRecord == null || score > currentRecord) {
+                        shouldUpdate = true; // Điểm mới cao hơn điểm cũ -> Cập nhật
+                    }
+                } else {
+                    shouldUpdate = true;
+                }
+
+                if (shouldUpdate) {
+                    java.util.Map<String, Object> leaderboardData = new java.util.HashMap<>();
+                    leaderboardData.put("uid", uid);
+                    leaderboardData.put("score", score);
+                    leaderboardData.put("time", this.time);
+                    leaderboardData.put("timestamp", com.google.firebase.Timestamp.now());
+
+                    // Lấy tên của user đang đăng nhập
+                    leaderboardData.put("username", Session.user.getName());
+
+                    leaderboardRef.set(leaderboardData)
+                            .addOnSuccessListener(aVoid -> Log.d("GameFirestore", "Đã phá kỷ lục! Đã cập nhật điểm số mới lên Leaderboard: " + score))
+                            .addOnFailureListener(e -> Log.e("GameFirestore", "Lỗi cập nhật Leaderboard: " + e.getMessage()));
+                } else {
+                    Log.d("GameFirestore", "Điểm số (" + score + ") không cao hơn điểm kỷ lục cũ");
+                }
+            }).addOnFailureListener(e -> Log.e("GameFirestore", "Không thể kiểm tra điểm kỷ lục cũ: " + e.getMessage()));
+
+            
         }
     }
 

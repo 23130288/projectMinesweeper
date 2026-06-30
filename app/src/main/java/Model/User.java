@@ -19,4 +19,13 @@ public class User {
         this.avatar = avatar;
     }
 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }
