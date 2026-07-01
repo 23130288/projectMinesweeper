@@ -15,6 +15,7 @@ import com.example.project.R;
 import com.example.project.StartingMenuActivity;
 import com.example.project.game.AchievementDialog;
 import com.example.project.game.ModeMenuActivity;
+import com.example.project.game.StatsDialog;
 import com.example.project.utils.CropImageHelper;
 import com.example.project.utils.UserManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -64,6 +65,12 @@ public class UserInterfaceActivity extends AppCompatActivity {
         btnAchievement.setOnClickListener(v -> {
             AchievementDialog dialog = new AchievementDialog();
             dialog.show(getSupportFragmentManager(), "ACHIEVEMENT_DIALOG");
+        });
+
+        Button btnStats = findViewById(R.id.btnStats);
+        btnStats.setOnClickListener(v -> {
+            StatsDialog dialog = new StatsDialog();
+            dialog.show(getSupportFragmentManager(), "STATS_DIALOG");
         });
 
         Button btnLogOut = findViewById(R.id.btnLogout);
